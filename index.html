@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Percorso IA 2026-27</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap">
+<style>
+  /* Layout: bande a tutta larghezza dello schermo (stile rotary.org), contenuto centrato fino a 1360px,
+     hero con rete neurale animata in oro e azzurro su blu royal; mobile a una colonna. */
+  :root {
+    --royal: #17458F;      /* Rotary Royal Blue */
+    --royal-deep: #0F2F63; /* fascia superiore, piè di pagina, sezione referenti */
+    --royal-ink: #0A1F45;  /* fondo dell'hero */
+    --gold: #F7A81B;       /* Rotary Gold */
+    --gold-deep: #D98C0A;
+    --azure: #0067C8;      /* Rotary Azure */
+    --sky: #019FCB;        /* Rotary Sky Blue */
+    --bg: #FFFFFF;
+    --bg-alt: #F2F5FA;
+    --fg: #1F2A3D;
+    --fg-muted: #5B6779;
+    --line: #D9E0EC;
+    --card: #FFFFFF;
+    --on-royal: #FFFFFF;
+    --font: "Open Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+    --maxw: 1360px;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 17px; line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  a { color: var(--azure); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  h1, h2, h3 { margin: 0; line-height: 1.12; text-wrap: balance; font-weight: 700; }
+  p { margin: 0; }
+  .wrap { width: 100%; max-width: var(--maxw); margin-inline: auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  .band { padding-block: clamp(56px, 8vw, 110px); }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-deep); }
+  .eyebrow::before { content: ""; width: 26px; height: 3px; background: currentColor; border-radius: 2px; flex: none; }
+  .on-dark .eyebrow { color: var(--gold); }
+  .lead { font-size: clamp(1.05rem, 1.35vw, 1.3rem); line-height: 1.6; color: var(--fg-muted); max-width: 62ch; }
+
+  /* ---------- Barra superiore ---------- */
+  .topbar { position: sticky; top: 0; z-index: 20; background: rgba(15,47,99,.92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--on-royal); border-bottom: 3px solid var(--gold); }
+  .topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 10px; }
+  .brand { display: flex; align-items: center; gap: 16px; min-width: 0; text-decoration: none; color: inherit; }
+  .brand > div { border-left: 1px solid rgba(255,255,255,.35); padding-left: 16px; min-width: 0; }
+  .logo { height: 46px; width: auto; flex: none; display: block; }
+  .brand strong { display: block; font-size: 15px; letter-spacing: .02em; white-space: nowrap; }
+  .brand > div > span { display: block; font-size: 12.5px; opacity: .8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brand .ri { display: inline; }
+  .topnav { display: flex; gap: 24px; font-size: 14px; font-weight: 600; }
+  .topnav a { color: var(--on-royal); text-decoration: none; opacity: .9; padding: 6px 0; border-bottom: 2px solid transparent; }
+  .topnav a:hover { opacity: 1; border-bottom-color: var(--gold); }
+  .menu-toggle { display: none; position: relative; }
+  .menu-toggle summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; font-size: 14px; padding: 8px 12px; border: 1.5px solid rgba(255,255,255,.5); border-radius: 4px; }
+  .menu-toggle summary::-webkit-details-marker { display: none; }
+  .menu-toggle .sheet { position: absolute; right: 0; top: calc(100% + 10px); background: var(--royal-deep); border: 1px solid rgba(255,255,255,.2); border-radius: 6px; padding: 10px 0; min-width: 220px; display: grid; box-shadow: 0 16px 40px rgba(0,0,0,.35); }
+  .menu-toggle .sheet a { color: var(--on-royal); text-decoration: none; padding: 11px 18px; font-weight: 600; font-size: 15px; }
+  .menu-toggle .sheet a:hover { background: rgba(255,255,255,.08); }
+
+  /* ---------- Barra "schermo intero" (solo dentro il riquadro di Google Sites) ---------- */
+  .fs-bar { display: flex; align-items: center; justify-content: center; gap: 10px; background: var(--gold); color: #1F2A3D; font-weight: 700; font-size: 15px; padding: 11px 16px; text-decoration: none; }
+  .fs-bar:hover { background: #FFB733; }
+  .fs-bar svg { width: 18px; height: 18px; flex: none; }
+
+  /* ---------- Hero con rete neurale ---------- */
+  .hero { position: relative; isolation: isolate; background: radial-gradient(1200px 700px at 78% 10%, #1E55AE 0%, var(--royal) 38%, var(--royal-ink) 100%); color: var(--on-royal); overflow: hidden; min-height: min(86svh, 920px); display: grid; align-items: center; }
+  body.embedded .hero { min-height: 0; }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+  .hero::after { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(90deg, rgba(10,31,69,.72) 0%, rgba(10,31,69,.35) 55%, rgba(10,31,69,0) 100%); pointer-events: none; }
+  .hero .wrap { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(300px, .9fr); gap: clamp(32px, 5vw, 72px); align-items: center; padding-block: clamp(56px, 8vw, 96px); }
+  .hero h1 { font-size: clamp(2.2rem, 5.2vw, 4.4rem); font-weight: 800; letter-spacing: -.015em; margin-top: 18px; }
+  .hero h1 em { font-style: normal; color: var(--gold); }
+  .hero .lead { color: rgba(255,255,255,.88); margin-top: 22px; }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 34px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 15px 28px; border-radius: 6px; font-weight: 700; font-size: 15.5px; text-decoration: none; border: 2px solid transparent; transition: transform .15s, background .15s, box-shadow .15s; cursor: pointer; font-family: inherit; line-height: 1.2; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-gold { background: var(--gold); color: #1F2A3D; border-color: var(--gold); box-shadow: 0 10px 30px rgba(247,168,27,.35); }
+  .btn-gold:hover { background: #FFB733; }
+  .btn-ghost { background: rgba(255,255,255,.06); color: var(--on-royal); border-color: rgba(255,255,255,.65); }
+  .btn-ghost:hover { background: rgba(255,255,255,.14); }
+  .btn-royal { background: var(--royal); color: var(--on-royal); border-color: var(--royal); }
+  .btn-outline { background: transparent; color: var(--royal); border-color: var(--royal); }
+
+  .next { position: relative; background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.22); border-left: 6px solid var(--gold); padding: 26px 28px; border-radius: 8px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); box-shadow: 0 30px 60px rgba(0,0,0,.25); }
+  .next .eyebrow { color: var(--gold); }
+  .next h3 { font-size: clamp(1.15rem, 1.5vw, 1.4rem); margin-top: 10px; }
+  .next dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 16px; margin: 16px 0 0; font-size: 15px; }
+  .next dt { opacity: .7; }
+  .next dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .next .btn { margin-top: 20px; width: 100%; }
+  .pulse { position: absolute; top: 18px; right: 18px; width: 10px; height: 10px; border-radius: 50%; background: var(--sky); box-shadow: 0 0 0 0 rgba(1,159,203,.6); animation: pulse 2.2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(1,159,203,.6); } 70% { box-shadow: 0 0 0 14px rgba(1,159,203,0); } 100% { box-shadow: 0 0 0 0 rgba(1,159,203,0); } }
+
+  /* ---------- Fascia numeri ---------- */
+  .facts { background: var(--royal-deep); color: var(--on-royal); border-top: 1px solid rgba(255,255,255,.12); }
+  .facts .wrap { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 24px; padding-block: 30px; }
+  .fact { position: relative; padding-left: 18px; border-left: 3px solid var(--gold); }
+  .fact strong { display: block; font-size: clamp(1.7rem, 2.4vw, 2.3rem); font-weight: 800; line-height: 1; font-variant-numeric: tabular-nums; }
+  .fact span { display: block; font-size: 14px; opacity: .8; margin-top: 8px; }
+
+  /* ---------- Sezioni ---------- */
+  .section-head { max-width: 64ch; margin-bottom: clamp(28px, 4vw, 48px); }
+  .section-head h2 { font-size: clamp(1.7rem, 3.2vw, 2.6rem); margin-top: 12px; }
+  .section-head p { margin-top: 14px; color: var(--fg-muted); font-size: 1.05rem; }
+  .on-dark .section-head p { color: rgba(255,255,255,.82); }
+
+  .steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(20px, 3vw, 40px); }
+  .step { min-width: 0; padding-top: 20px; border-top: 4px solid var(--royal); position: relative; }
+  .step::before { content: ""; position: absolute; top: -4px; left: 0; width: 56px; height: 4px; background: var(--gold); }
+  .step .time { font-weight: 800; color: var(--royal); font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+  .step h3 { font-size: 1.25rem; margin-top: 6px; }
+  .step p { margin-top: 10px; color: var(--fg-muted); font-size: 15.5px; }
+
+  .band-alt { background: var(--bg-alt); }
+  .agenda { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px; }
+  .meeting { min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 26px 28px; display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; align-items: start; transition: box-shadow .2s, transform .2s; }
+  .meeting:hover { box-shadow: 0 16px 40px rgba(23,69,143,.12); transform: translateY(-2px); }
+  .meeting .num { grid-row: span 3; width: 58px; height: 58px; border-radius: 50%; background: conic-gradient(from 200deg, var(--gold), var(--sky), var(--royal), var(--gold)); color: var(--on-royal); display: grid; place-items: center; font-weight: 800; font-size: 1.4rem; position: relative; }
+  .meeting .num::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--royal); }
+  .meeting .num span { position: relative; }
+  .meeting .date { font-size: 13.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-deep); }
+  .meeting h3 { font-size: 1.2rem; }
+  .meeting p { color: var(--fg-muted); font-size: 15px; margin-top: 2px; }
+
+  .menu { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .tile { min-width: 0; display: flex; flex-direction: column; gap: 10px; background: var(--card); border: 1px solid var(--line); border-top: 5px solid var(--sky); border-radius: 10px; padding: 28px 26px 26px; text-decoration: none; color: inherit; transition: transform .18s, box-shadow .18s; }
+  .tile:hover { transform: translateY(-4px); box-shadow: 0 18px 44px rgba(23,69,143,.16); }
+  .tile.primary { border-top-color: var(--gold); }
+  .tile .ico { width: 46px; height: 46px; border-radius: 10px; background: linear-gradient(135deg, #EAF1FB, #F6F9FD); color: var(--royal); display: grid; place-items: center; }
+  .tile .ico svg { width: 24px; height: 24px; }
+  .tile h3 { font-size: 1.15rem; }
+  .tile p { color: var(--fg-muted); font-size: 15px; flex: 1; }
+  .tile .go { font-weight: 700; color: var(--azure); font-size: 14.5px; }
+  .tile .who { font-size: 12px; letter-spacing: .1em; text-transform: uppercase; font-weight: 700; color: var(--fg-muted); }
+
+  .band-royal { background: linear-gradient(135deg, var(--royal-deep), var(--royal-ink)); color: var(--on-royal); position: relative; overflow: hidden; }
+  .band-royal::before { content: ""; position: absolute; right: -160px; top: -160px; width: 560px; height: 560px; border-radius: 50%; border: 100px solid rgba(255,255,255,.04); pointer-events: none; }
+  .band-royal .wrap { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: clamp(32px, 5vw, 72px); align-items: start; }
+  .band-royal h2 { font-size: clamp(1.6rem, 3vw, 2.3rem); margin-top: 12px; }
+  .band-royal p { color: rgba(255,255,255,.85); margin-top: 14px; }
+  .checklist { list-style: none; margin: 0; padding: 0; display: grid; gap: 16px; }
+  .checklist li { display: grid; grid-template-columns: 30px 1fr; gap: 14px; align-items: start; font-size: 15.5px; }
+  .checklist .tick { width: 30px; height: 30px; border-radius: 50%; background: var(--gold); color: #1F2A3D; display: grid; place-items: center; font-weight: 800; font-size: 14px; }
+  .checklist strong { display: block; }
+  .checklist span { color: rgba(255,255,255,.8); font-size: 14.5px; }
+
+  /* ---------- Area riservata ---------- */
+  .gate { max-width: 460px; display: grid; gap: 8px; }
+  .gate label, .pw-change summary { font-weight: 700; font-size: 14.5px; }
+  .gate-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .gate-row input { flex: 1 1 200px; min-width: 0; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 6px; font: inherit; background: var(--card); color: var(--fg); }
+  .gate-row input:focus { border-color: var(--royal); outline: none; box-shadow: 0 0 0 3px rgba(23,69,143,.18); }
+  .gate-msg { min-height: 1.4em; font-size: 14px; color: var(--gold-deep); }
+  .admin-box { max-width: 680px; display: grid; gap: 18px; background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--gold); border-radius: 10px; padding: 28px 30px; }
+  .admin-box h3 { font-size: 1.15rem; margin-top: 8px; }
+  .admin-box p { color: var(--fg-muted); font-size: 15px; margin-top: 8px; }
+  .admin-box .btn { justify-self: start; }
+  .pw-change { border-top: 1px solid var(--line); padding-top: 14px; font-size: 14.5px; }
+  .pw-change summary { cursor: pointer; color: var(--azure); }
+  .pw-change p { margin: 10px 0 12px; }
+  .pw-out { display: block; margin-top: 10px; font-size: 12.5px; word-break: break-all; user-select: all; color: var(--fg); }
+  .pw-out:empty { display: none; }
+
+  /* ---------- Piè di pagina ---------- */
+  footer { background: var(--royal-ink); color: rgba(255,255,255,.78); font-size: 14px; }
+  footer .wrap { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 32px; padding-block: 48px; }
+  footer h4 { margin: 0 0 12px; font-size: 12.5px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+  footer ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+  footer a { color: #fff; }
+  footer .logo { height: 42px; margin-bottom: 14px; }
+  .mail { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 13.5px; user-select: all; }
+  footer .mail { color: #fff; }
+  .legal { border-top: 1px solid rgba(255,255,255,.14); }
+  .legal .wrap { display: block; padding-block: 16px; font-size: 12.5px; color: rgba(255,255,255,.6); }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 1000px) {
+    .hero .wrap, .band-royal .wrap { grid-template-columns: 1fr; }
+    .steps, .menu { grid-template-columns: 1fr 1fr; }
+    footer .wrap { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 760px) {
+    .topnav { display: none; }
+    .menu-toggle { display: block; }
+    .brand > div > span { display: none; }
+    .brand .ri { display: none; }
+    .brand strong { font-size: 14px; white-space: normal; line-height: 1.2; }
+    .logo { height: 40px; }
+    .facts .wrap { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    body { font-size: 16px; }
+    .steps, .menu, .agenda, footer .wrap { grid-template-columns: 1fr; }
+    .hero { min-height: 0; }
+    .meeting { padding: 22px 20px; }
+    .next { padding: 22px 20px; }
+    .cta-row .btn { flex: 1 1 160px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .btn, .tile, .meeting { transition: none; }
+    .btn:hover, .tile:hover, .meeting:hover { transform: none; }
+    .pulse { animation: none; }
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <img class="logo" src="data:image/png;base64,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" alt="Rotary" width="129" height="46">
+      <div>
+        <strong><span class="ri">Rotary International · </span>Distretto 2090</strong>
+        <span>Commissione Innovazione Digitale e Intelligenza Artificiale</span>
+      </div>
+    </a>
+    <nav class="topnav" aria-label="Sezioni della pagina">
+      <a href="#come-funziona">Come funziona</a>
+      <a href="#calendario">Calendario</a>
+      <a href="#servizi">Servizi</a>
+      <a href="#referenti">Referenti di club</a>
+      <a href="#amministrazione">Amministrazione</a>
+    </nav>
+    <details class="menu-toggle">
+      <summary aria-label="Apri il menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg> Menu</summary>
+      <div class="sheet">
+        <a href="#come-funziona">Come funziona</a>
+        <a href="#calendario">Calendario</a>
+        <a href="#servizi">Servizi</a>
+        <a href="#referenti">Referenti di club</a>
+        <a href="#amministrazione">Amministrazione</a>
+      </div>
+    </details>
+  </div>
+</header>
+<a id="fs-bar" class="fs-bar" href="#" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Stai vedendo la versione compatta: apri la pagina a schermo intero</a>
+
+<section class="hero on-dark" id="top">
+  <canvas id="net" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Percorso IA 2026-27 · Anno rotariano 2026-27</span>
+      <h1>AI senza paura. <em>Quattro serate</em> per capire l'intelligenza artificiale e usarla nel club.</h1>
+      <p class="lead">Un percorso di alfabetizzazione aperto a tutti i soci dei club del Distretto 2090: incontri online di un'ora, linguaggio semplice, esempi concreti e spazio alle domande. Nessun prerequisito tecnico.</p>
+      <div class="cta-row">
+        <a class="btn btn-gold" data-link="iscrizione" href="#">Iscriviti al percorso</a>
+        <a class="btn btn-ghost" href="#come-funziona">Scopri come funziona</a>
+      </div>
+    </div>
+    <aside class="next" aria-label="Prossimo incontro">
+      <span class="pulse" aria-hidden="true"></span>
+      <span class="eyebrow">Prossimo incontro</span>
+      <h3 id="next-title">1 · AI senza paura: cos'è, cosa fa, cosa non fa</h3>
+      <dl>
+        <dt>Quando</dt><dd id="next-date">data da definire, ore 21:00</dd>
+        <dt>Dove</dt><dd>online, Google Meet</dd>
+        <dt>Durata</dt><dd>60 minuti</dd>
+      </dl>
+      <a class="btn btn-gold" data-link="meet" href="#">Entra nella diretta</a>
+    </aside>
+  </div>
+</section>
+
+<div class="facts">
+  <div class="wrap">
+    <div class="fact"><strong>4</strong><span>incontri online, uno al mese</span></div>
+    <div class="fact"><strong>60'</strong><span>per incontro, dalle 21:00 alle 22:00</span></div>
+    <div class="fact"><strong>3+1</strong><span>pillole da 6-7 minuti e mezz'ora di confronto</span></div>
+    <div class="fact"><strong>0 €</strong><span>di costo per i club e per i soci</span></div>
+  </div>
+</div>
+
+<section class="band" id="come-funziona">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Come funziona</span>
+      <h2>Un'ora, un formato semplice, materiali il giorno dopo.</h2>
+      <p>Ogni incontro ha la stessa struttura, così chi partecipa sa sempre cosa aspettarsi. Si collega chi vuole, da casa o dal club; chi non può esserci può giustificarsi tramite il referente di club.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="time">Primi 30 minuti</div>
+        <h3>Tre pillole</h3>
+        <p>Tre interventi brevi, da 6-7 minuti ciascuno, tenuti da soci e relatori del Distretto. Un concetto per volta, niente gergo.</p>
+      </div>
+      <div class="step">
+        <div class="time">Secondi 30 minuti</div>
+        <h3>Confronto aperto</h3>
+        <p>Domande, dubbi ed esperienze dei club. Lo spazio più utile della serata: porta la tua situazione reale.</p>
+      </div>
+      <div class="step">
+        <div class="time">Il giorno dopo</div>
+        <h3>Materiali e questionario</h3>
+        <p>Registrazione, slide e un breve questionario di gradimento arrivano via mail a chi ha partecipato o si è giustificato. Firmare il registro presenze durante l'incontro è tutto ciò che serve.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band band-alt" id="calendario">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Calendario</span>
+      <h2>I quattro incontri</h2>
+      <p>Sempre alle 21:00, sempre online. Le date sono pubblicate qui e inviate via mail agli iscritti con il promemoria e il link alla diretta.</p>
+    </div>
+    <div class="agenda">
+      <article class="meeting">
+        <div class="num"><span>1</span></div>
+        <div class="date" data-date="1">Data da definire</div>
+        <h3>AI senza paura: cos'è, cosa fa, cosa non fa</h3>
+        <p>Le basi, senza tecnicismi: cosa c'è dietro un assistente AI, dove è utile e dove sbaglia.</p>
+      </article>
+      <article class="meeting">
+        <div class="num"><span>2</span></div>
+        <div class="date" data-date="2">Data da definire</div>
+        <h3>L'AI al servizio del club</h3>
+        <p>Comunicazione, verbali, bollettini, organizzazione degli eventi: esempi pronti da riusare nel proprio club.</p>
+      </article>
+      <article class="meeting">
+        <div class="num"><span>3</span></div>
+        <div class="date" data-date="3">Data da definire</div>
+        <h3>Usare l'AI in modo responsabile</h3>
+        <p>Privacy, errori, fonti e trasparenza: le regole di buon senso per un uso etico e sicuro.</p>
+      </article>
+      <article class="meeting">
+        <div class="num"><span>4</span></div>
+        <div class="date" data-date="4">Data da definire</div>
+        <h3>Dall'idea al progetto: AI per il territorio</h3>
+        <p>Come trasformare un'idea di servizio in un progetto concreto, da candidare allo Showcase di fine anno.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="servizi">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Menu completo</span>
+      <h2>Tutto il percorso in sei link</h2>
+      <p>Ogni strumento è un semplice modulo o una cartella Google: non serve alcun account per iscriversi o firmare le presenze.</p>
+    </div>
+    <div class="menu">
+      <a class="tile primary" data-link="iscrizione" href="#">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></div>
+        <span class="who">Per tutti i soci</span>
+        <h3>Iscrizione al percorso</h3>
+        <p>Un minuto per lasciare nome, club e indirizzo email. Riceverai promemoria e link di accesso prima di ogni incontro.</p>
+        <span class="go">Compila il modulo →</span>
+      </a>
+      <a class="tile" data-link="meet" href="#">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="m22 8-6 4 6 4V8z"/></svg></div>
+        <span class="who">Durante l'incontro</span>
+        <h3>Diretta su Google Meet</h3>
+        <p>Il collegamento al prossimo incontro. Viene aggiornato qui e inviato via mail agli iscritti qualche giorno prima.</p>
+        <span class="go">Entra nella diretta →</span>
+      </a>
+      <a class="tile" data-link="presenze" href="#">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <span class="who">Durante l'incontro</span>
+        <h3>Registro presenze</h3>
+        <p>Firma la presenza mentre sei collegato: è ciò che dà diritto a ricevere registrazione e materiali il giorno dopo.</p>
+        <span class="go">Firma la presenza →</span>
+      </a>
+      <a class="tile" data-link="archivio" href="#">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+        <span class="who">Dopo l'incontro</span>
+        <h3>Archivio materiali</h3>
+        <p>Programma, locandine e documenti pubblici del percorso. Le registrazioni degli incontri sono riservate a chi ha partecipato.</p>
+        <span class="go">Apri l'archivio →</span>
+      </a>
+      <a class="tile" data-link="gradimento" href="#">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+        <span class="who">Dopo l'incontro</span>
+        <h3>Questionario di gradimento</h3>
+        <p>Due minuti per dirci cosa ha funzionato e cosa approfondire. Le risposte orientano l'incontro successivo.</p>
+        <span class="go">Rispondi →</span>
+      </a>
+      <a class="tile" data-link="showcase" href="#">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.5 7 1-5 5 1.2 7L12 18l-6.2 3.5L7 14.5l-5-5 7-1z"/></svg></div>
+        <span class="who">Fine anno</span>
+        <h3>Showcase 2027</h3>
+        <p>Candida il progetto AI del tuo club: le esperienze più interessanti saranno presentate al Distretto a fine anno rotariano.</p>
+        <span class="go">Candida un progetto →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="band band-royal on-dark" id="referenti">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Referenti di club</span>
+      <h2>Ogni club ha un referente. Ecco cosa gli chiediamo.</h2>
+      <p>Il referente è il ponte tra il Distretto e i soci: poche azioni, nessun carico tecnico. Il coordinamento avviene nel gruppo WhatsApp dei referenti, curato dalla Commissione.</p>
+    </div>
+    <ul class="checklist">
+      <li><span class="tick">1</span><div><strong>Far circolare l'iscrizione</strong><span>Condividere il link di iscrizione nel club e invitare i soci a registrarsi una sola volta per tutto il percorso.</span></div></li>
+      <li><span class="tick">2</span><div><strong>Ricordare l'incontro</strong><span>Rilanciare il promemoria qualche giorno prima e, durante la serata, ricordare di firmare il registro presenze.</span></div></li>
+      <li><span class="tick">3</span><div><strong>Segnalare gli assenti giustificati</strong><span>Comunicare alla Commissione i soci che non hanno potuto collegarsi per un motivo valido: riceveranno comunque i materiali.</span></div></li>
+      <li><span class="tick">4</span><div><strong>Raccogliere idee per lo Showcase</strong><span>Tenere traccia delle idee emerse nel club e accompagnare la candidatura di un progetto a fine anno.</span></div></li>
+    </ul>
+  </div>
+</section>
+
+<section class="band band-alt" id="amministrazione">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Area riservata</span>
+      <h2>Amministrazione della piattaforma</h2>
+      <p>Solo per la Commissione. Servono due chiavi: la password di questa pagina e, subito dopo, l'accesso Google con l'account <span class="mail">ai.rotary2090@gmail.com</span>. Da lì si raggiungono foglio di regia, Drive, moduli e script.</p>
+    </div>
+    <form class="gate" id="gate" autocomplete="off">
+      <label for="gate-pw">Password della pagina</label>
+      <div class="gate-row">
+        <input type="password" id="gate-pw" name="gate-pw" required autocomplete="current-password">
+        <button type="submit" class="btn btn-royal">Entra</button>
+      </div>
+      <p class="gate-msg" id="gate-msg" aria-live="polite"></p>
+    </form>
+    <div class="admin-box" id="admin-box" hidden>
+      <div>
+        <span class="eyebrow">Pannello di regia</span>
+        <h3>Promemoria, accessi, materiali, riepiloghi e collegamenti al back end</h3>
+        <p>Google chiederà l'accesso: usare l'account del Distretto. Il pannello mostra in testa i link a foglio di regia, cartelle Drive, moduli in modifica e progetto Apps Script.</p>
+      </div>
+      <a class="btn btn-gold" data-link="pannello" href="#">Apri il pannello di regia</a>
+      <details class="pw-change">
+        <summary>Cambiare la password della pagina</summary>
+        <p>Scrivi la nuova password: qui sotto compare la riga da incollare nel file della pagina al posto di quella che inizia con <code>var HASH_PASSWORD</code> (vedi manuale, C.4). Nulla viene salvato finché non aggiorni il file.</p>
+        <div class="gate-row">
+          <input type="text" id="pw-new" placeholder="nuova password">
+          <button type="button" class="btn btn-outline" id="pw-gen">Genera la riga</button>
+        </div>
+        <code id="pw-out" class="pw-out"></code>
+      </details>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <img class="logo" src="data:image/png;base64,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" alt="Rotary" width="129" height="46">
+      <ul>
+        <li>Rotary International · Distretto 2090</li>
+        <li>Marche, Abruzzo, Molise, Umbria</li>
+        <li>Governatore Stefano Gobbi</li>
+      </ul>
+    </div>
+    <div>
+      <h4>Percorso IA 2026-27</h4>
+      <ul>
+        <li><a href="#come-funziona">Come funziona</a></li>
+        <li><a href="#calendario">Calendario</a></li>
+        <li><a href="#servizi">Servizi</a></li>
+        <li><a href="#referenti">Referenti di club</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Commissione Innovazione Digitale e AI</h4>
+      <ul>
+        <li>Presidente: Michele Bresciani</li>
+        <li>Piattaforma: Luisa Iannelli, Diletta Cacciagrano</li>
+        <li>Scrivici: <span class="mail">ai.rotary2090@gmail.com</span></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Documenti</h4>
+      <ul>
+        <li><a data-link="archivio" href="#">Archivio pubblico del percorso</a></li>
+        <li><a data-link="privacy" href="#">Informativa sul trattamento dei dati</a></li>
+        <li><a data-link="iscrizione" href="#">Modulo di iscrizione</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="legal">
+    <div class="wrap">Rotary e il marchio Rotary sono marchi registrati di Rotary International, usati con autorizzazione dal Distretto 2090. I dati raccolti con i moduli sono trattati esclusivamente per l'organizzazione del percorso.</div>
+  </div>
+</footer>
+
+<script>
+  /* ============================================================
+     UNICO PUNTO DA MODIFICARE: i link della piattaforma.
+     Corrispondono alla scheda "Config" del foglio di regia.
+     ============================================================ */
+  var LINK = {
+    iscrizione: 'https://docs.google.com/forms/d/e/1FAIpQLSftBrkIBTaDNAZfOp_POL4wjzSgvlUU3t9lVRQ932R4zHmvrQ/viewform',
+    presenze:   'https://docs.google.com/forms/d/e/1FAIpQLSdxggo4kA4xJfT-eyqrdC-TvT1UKcZeWp7mEGWmJNWl_aEp8Q/viewform',
+    gradimento: 'https://docs.google.com/forms/d/e/1FAIpQLScN5H6FmIBSmdCnD7ahTbe_rbHkEYOKq4JO6SLrWQGfgoHjGQ/viewform',
+    showcase:   'https://docs.google.com/forms/d/e/1FAIpQLScQsqE4_LhBxGq-isnq7LkiBbpPT4aAX2jeCPC9SrNlC3libw/viewform',
+    archivio:   'https://drive.google.com/drive/folders/1nSO6oa2-JBx5aNUlT9nZqut8_kLmKt1x',
+    privacy:    'https://drive.google.com/drive/folders/1nSO6oa2-JBx5aNUlT9nZqut8_kLmKt1x',
+    meet:       '',  /* incollare qui il link Meet del prossimo incontro, es. https://meet.google.com/abc-defg-hij */
+    /* Area riservata: solo il pannello di regia, che Google apre esclusivamente all'account ai.rotary2090.
+       Foglio, Drive, moduli e script si raggiungono dai link in testa al pannello: non stanno in questa pagina. */
+    pannello:   'https://script.google.com/macros/s/AKfycby-N4KOWn_1DAhc-0whysDw4NabPQRsbNTZOfzAzu9HFc_neZDZM8Gpu7_mzSAmDYu8/exec',
+    /* La stessa pagina a schermo intero (GitHub Pages, repository rotary2090/percorso-ia): la barra dorata la apre quando la pagina è dentro il riquadro di Google Sites. */
+    schermo:    'https://rotary2090.github.io/percorso-ia/'
+  };
+  /* Password della pagina per l'area riservata: qui c'è solo l'impronta (SHA-256), non la password.
+     Per cambiarla: entra nell'area riservata → "Cambiare la password della pagina" → incolla la riga generata al posto di questa. */
+  var HASH_PASSWORD = 'a39c71e6c2335c6472b8485d17341ae7f635ab5dd30714f9e4dff778c19cc950';
+  /* Prossimo incontro mostrato nel riquadro in alto (numero 1-4) e date. */
+  var PROSSIMO = 1;
+  var DATE = { 1: 'Mercoledì 4 novembre 2026', 2: 'Mercoledì 9 dicembre 2026', 3: 'Martedì 12 gennaio 2027', 4: 'Mercoledì 24 febbraio 2027' };
+  var TITOLI = {
+    1: 'AI senza paura: cos\'è, cosa fa, cosa non fa',
+    2: 'L\'AI al servizio del club',
+    3: 'Usare l\'AI in modo responsabile',
+    4: 'Dall\'idea al progetto: AI per il territorio'
+  };
+
+  (function () {
+    /* Dentro un riquadro (Google Sites) l'hero non usa l'altezza dello schermo. */
+    /* Riquadro di Google Sites: la pagina è in un frame molto più alto dello schermo. Una pagina a schermo intero (anche dentro il frame di Apps Script) ha l'altezza dello schermo. */
+    var embedded = false;
+    try { embedded = (window.self !== window.top && window.innerHeight > (screen.availHeight || 800) * 1.3); } catch (e) {}
+    if (embedded) {
+      document.body.classList.add('embedded');
+      /* Dentro il riquadro di Google Sites: prova a portare il browser alla versione a schermo intero;
+         se il riquadro lo impedisce, resta visibile la barra dorata con il collegamento. */
+      var fs = document.getElementById('fs-bar');
+      /* Dentro il riquadro di Google Sites: mostra la barra dorata che porta alla versione a schermo intero (GitHub Pages). */
+      if (fs && LINK.schermo) { fs.href = LINK.schermo; fs.hidden = false; }
+    }
+
+    document.querySelectorAll('[data-link]').forEach(function (a) {
+      var url = LINK[a.getAttribute('data-link')];
+      if (url) { a.href = url; a.target = '_blank'; a.rel = 'noopener'; }
+      else if (a.getAttribute('data-link') === 'meet') {
+        a.href = LINK.iscrizione; a.target = '_blank'; a.rel = 'noopener';
+        a.title = 'Il link alla diretta sarà pubblicato prima dell\'incontro: nel frattempo iscriviti per riceverlo via mail.';
+      }
+    });
+    document.querySelectorAll('[data-date]').forEach(function (el) {
+      var d = DATE[el.getAttribute('data-date')];
+      if (d) el.textContent = d + ' · ore 21:00';
+    });
+    var t = document.getElementById('next-title'), d = document.getElementById('next-date');
+    if (t && TITOLI[PROSSIMO]) t.textContent = PROSSIMO + ' · ' + TITOLI[PROSSIMO];
+    if (d) d.textContent = (DATE[PROSSIMO] || 'data da definire') + ', ore 21:00';
+
+    /* Menu mobile: si chiude dopo la scelta. */
+    var mt = document.querySelector('.menu-toggle');
+    if (mt) mt.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', function () { mt.removeAttribute('open'); }); });
+
+    /* Area riservata */
+    function sha256(txt) {
+      if (!(window.crypto && crypto.subtle)) return Promise.reject(new Error('nocrypto'));
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt)).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+      });
+    }
+    var gate = document.getElementById('gate'), box = document.getElementById('admin-box'), msg = document.getElementById('gate-msg');
+    function apri() { gate.hidden = true; box.hidden = false; try { sessionStorage.setItem('ia2090-admin', '1'); } catch (e) {} }
+    try { if (sessionStorage.getItem('ia2090-admin') === '1') apri(); } catch (e) {}
+    gate.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var pw = document.getElementById('gate-pw').value;
+      sha256(pw).then(function (h) {
+        if (h === HASH_PASSWORD) { msg.textContent = ''; apri(); }
+        else { msg.textContent = 'Password non corretta.'; document.getElementById('gate-pw').select(); }
+      }).catch(function () { msg.textContent = 'Questo browser non permette la verifica della password: aprire la pagina dal sito pubblicato (https).'; });
+    });
+    document.getElementById('pw-gen').addEventListener('click', function () {
+      var v = document.getElementById('pw-new').value;
+      if (!v) return;
+      sha256(v).then(function (h) { document.getElementById('pw-out').textContent = "var HASH_PASSWORD = '" + h + "';"; });
+    });
+
+    /* ---------- Rete neurale animata nell'hero (oro e azzurro su blu) ---------- */
+    var cv = document.getElementById('net');
+    if (!cv || !cv.getContext) return;
+    var ctx = cv.getContext('2d'), nodes = [], W = 0, H = 0, raf = 0;
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function resize() {
+      var r = cv.parentElement.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+      W = Math.max(1, r.width); H = Math.max(1, r.height);
+      cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      var n = Math.round(Math.min(130, Math.max(40, W * H / 11000)));
+      nodes = [];
+      for (var i = 0; i < n; i++) nodes.push({
+        x: Math.random() * W, y: Math.random() * H,
+        vx: (Math.random() - .5) * .35, vy: (Math.random() - .5) * .35,
+        r: Math.random() < .12 ? 3.2 : 1.6 + Math.random() * 1.2,
+        gold: Math.random() < .3, ph: Math.random() * Math.PI * 2
+      });
+      if (reduce) draw(0);
+    }
+    function draw(ts) {
+      ctx.clearRect(0, 0, W, H);
+      var link = Math.min(170, Math.max(110, W / 9)), i, j, a, b, dx, dy, d;
+      ctx.lineWidth = 1;
+      for (i = 0; i < nodes.length; i++) {
+        a = nodes[i];
+        for (j = i + 1; j < nodes.length; j++) {
+          b = nodes[j]; dx = a.x - b.x; dy = a.y - b.y; d = Math.sqrt(dx * dx + dy * dy);
+          if (d < link) {
+            var o = (1 - d / link) * .55;
+            ctx.strokeStyle = (a.gold && b.gold) ? 'rgba(247,168,27,' + o + ')' : 'rgba(1,159,203,' + o + ')';
+            ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke();
+          }
+        }
+      }
+      for (i = 0; i < nodes.length; i++) {
+        a = nodes[i];
+        var tw = .65 + .35 * Math.sin(ts / 900 + a.ph);
+        ctx.beginPath(); ctx.arc(a.x, a.y, a.r, 0, Math.PI * 2);
+        ctx.fillStyle = a.gold ? 'rgba(247,168,27,' + tw + ')' : 'rgba(120,205,235,' + tw + ')';
+        ctx.fill();
+        if (a.r > 3) { ctx.beginPath(); ctx.arc(a.x, a.y, a.r + 6 + 3 * tw, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(247,168,27,' + (.25 * tw) + ')'; ctx.stroke(); }
+        if (!reduce) {
+          a.x += a.vx; a.y += a.vy;
+          if (a.x < -10) a.x = W + 10; else if (a.x > W + 10) a.x = -10;
+          if (a.y < -10) a.y = H + 10; else if (a.y > H + 10) a.y = -10;
+        }
+      }
+      if (!reduce) raf = requestAnimationFrame(draw);
+    }
+    resize();
+    window.addEventListener('resize', function () { cancelAnimationFrame(raf); resize(); if (!reduce) raf = requestAnimationFrame(draw); });
+    if (!reduce) raf = requestAnimationFrame(draw);
+    document.addEventListener('visibilitychange', function () {
+      if (reduce) return;
+      if (document.hidden) cancelAnimationFrame(raf); else raf = requestAnimationFrame(draw);
+    });
+  })();
+</script>
+</body>
+</html>
