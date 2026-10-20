@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Regia — Percorso IA 2026-27</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700;800&display=swap">
+<style>
+  /* Pagina riservata alla Commissione: non è collegata dal sito pubblico. L'indirizzo è nel Manuale (A.3). */
+  :root {
+    --royal: #17458F; --royal-deep: #0F2F63; --royal-ink: #0A1F45;
+    --gold: #F7A81B; --gold-deep: #D98C0A; --azure: #0067C8;
+    --bg: #F2F5FA; --fg: #1F2A3D; --fg-muted: #5B6779; --line: #D9E0EC; --card: #FFFFFF; --on-royal: #FFFFFF;
+    --font: "Open Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body { margin: 0; min-height: 100svh; background: var(--bg); color: var(--fg); font-family: var(--font); font-size: 16px; line-height: 1.6; display: flex; flex-direction: column; -webkit-font-smoothing: antialiased; }
+  a { color: var(--azure); }
+  a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  h1, h2, h3, p { margin: 0; }
+  .topbar { background: var(--royal-deep); color: var(--on-royal); border-bottom: 3px solid var(--gold); }
+  .topbar .wrap { display: flex; align-items: center; gap: 16px; padding-block: 12px; }
+  .wrap { width: 100%; max-width: 760px; margin-inline: auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  .brand strong { display: block; font-size: 15px; }
+  .brand span { display: block; font-size: 12.5px; opacity: .8; }
+  .wheel { width: 40px; height: 40px; border-radius: 50%; background: conic-gradient(from 200deg, var(--gold), #fff3, var(--gold)); position: relative; flex: none; }
+  .wheel::before { content: ""; position: absolute; inset: 7px; border-radius: 50%; background: var(--royal-deep); }
+  main { flex: 1; padding-block: clamp(32px, 6vw, 72px); }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 12.5px; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--gold-deep); }
+  .eyebrow::before { content: ""; width: 26px; height: 3px; background: currentColor; border-radius: 2px; }
+  h1 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); line-height: 1.15; margin-top: 12px; text-wrap: balance; }
+  .intro { margin-top: 14px; color: var(--fg-muted); max-width: 62ch; }
+  .mail { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 14px; user-select: all; }
+  .gate { margin-top: 32px; max-width: 460px; display: grid; gap: 8px; }
+  .gate label, .pw-change summary { font-weight: 700; font-size: 14.5px; }
+  .gate-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .gate-row input { flex: 1 1 200px; min-width: 0; padding: 13px 14px; border: 1.5px solid var(--line); border-radius: 6px; font: inherit; background: var(--card); color: var(--fg); }
+  .gate-row input:focus { border-color: var(--royal); outline: none; box-shadow: 0 0 0 3px rgba(23,69,143,.18); }
+  .gate-msg { min-height: 1.4em; font-size: 14px; color: var(--gold-deep); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 26px; border-radius: 6px; font-weight: 700; font-size: 15.5px; text-decoration: none; border: 2px solid transparent; cursor: pointer; font-family: inherit; line-height: 1.2; }
+  .btn-gold { background: var(--gold); color: #1F2A3D; border-color: var(--gold); box-shadow: 0 10px 30px rgba(247,168,27,.35); }
+  .btn-gold:hover { background: #FFB733; }
+  .btn-royal { background: var(--royal); color: var(--on-royal); border-color: var(--royal); }
+  .btn-outline { background: transparent; color: var(--royal); border-color: var(--royal); }
+  .admin-box { margin-top: 32px; display: grid; gap: 18px; background: var(--card); border: 1px solid var(--line); border-left: 6px solid var(--gold); border-radius: 10px; padding: 28px 30px; }
+  .admin-box h2 { font-size: 1.15rem; margin-top: 8px; }
+  .admin-box p { color: var(--fg-muted); font-size: 15px; margin-top: 8px; }
+  .admin-box .btn { justify-self: start; }
+  .admin-box ul { margin: 0; padding-left: 20px; color: var(--fg-muted); font-size: 15px; }
+  .pw-change { border-top: 1px solid var(--line); padding-top: 14px; font-size: 14.5px; }
+  .pw-change summary { cursor: pointer; color: var(--azure); }
+  .pw-change p { margin: 10px 0 12px; }
+  .pw-out { display: block; margin-top: 10px; font-size: 12.5px; word-break: break-all; user-select: all; color: var(--fg); }
+  .pw-out:empty { display: none; }
+  footer { background: var(--royal-ink); color: rgba(255,255,255,.7); font-size: 13px; }
+  footer .wrap { padding-block: 16px; }
+  footer a { color: #fff; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <span class="wheel" aria-hidden="true"></span>
+    <div class="brand">
+      <strong>Rotary International · Distretto 2090</strong>
+      <span>Commissione Innovazione Digitale · Percorso IA 2026-27</span>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="wrap">
+    <span class="eyebrow">Area riservata</span>
+    <h1>Regia del Percorso IA 2026-27</h1>
+    <p class="intro">Solo per la Commissione. Questa pagina non è collegata dal sito pubblico. Servono due chiavi: la password di questa pagina e, subito dopo, l'accesso Google con l'account <span class="mail">ai.rotary2090@gmail.com</span>. Da lì si raggiungono pannello di regia, foglio, Drive, moduli e script.</p>
+    <form class="gate" id="gate" autocomplete="off">
+      <label for="gate-pw">Password della pagina</label>
+      <div class="gate-row">
+        <input type="password" id="gate-pw" name="gate-pw" required autocomplete="current-password">
+        <button type="submit" class="btn btn-royal">Entra</button>
+      </div>
+      <p class="gate-msg" id="gate-msg" aria-live="polite"></p>
+    </form>
+    <div class="admin-box" id="admin-box" hidden>
+      <div>
+        <span class="eyebrow">Pannello di regia</span>
+        <h2>Promemoria ai referenti, accessi ai materiali, questionari, riepiloghi e collegamenti al back end</h2>
+        <p>Google chiederà l'accesso: usare l'account del Distretto. Il pannello mostra in testa i link a foglio di regia, cartelle Drive, moduli in modifica e progetto Apps Script.</p>
+      </div>
+      <a class="btn btn-gold" id="pannello" href="#">Apri il pannello di regia</a>
+      <div>
+        <span class="eyebrow">Promemoria</span>
+        <ul>
+          <li>Il link Meet, il registro presenze e l'archivio dei materiali non sono sul sito pubblico: si trovano nella scheda Config del foglio e si inviano via email / WhatsApp.</li>
+          <li>Il registro presenze si condivide solo durante l'incontro, con chi è collegato; i materiali vanno alle email raccolte dal registro.</li>
+        </ul>
+      </div>
+      <details class="pw-change">
+        <summary>Cambiare la password della pagina</summary>
+        <p>Scrivi la nuova password: qui sotto compare la riga da incollare nel file <code>regia.html</code> al posto di quella che inizia con <code>var HASH_PASSWORD</code> (vedi manuale, C.4). Nulla viene salvato finché non aggiorni il file su GitHub.</p>
+        <div class="gate-row">
+          <input type="text" id="pw-new" placeholder="nuova password">
+          <button type="button" class="btn btn-outline" id="pw-gen">Genera la riga</button>
+        </div>
+        <code id="pw-out" class="pw-out"></code>
+      </details>
+    </div>
+  </div>
+</main>
+<footer>
+  <div class="wrap">Distretto Rotary 2090 · Commissione Innovazione Digitale · <a href="https://sites.google.com/view/percorso-ia-2026-27">Sito pubblico del percorso</a></div>
+</footer>
+<script>
+  /* ============================================================
+     UNICO PUNTO DA MODIFICARE
+     ============================================================ */
+  /* Pannello di regia (app web Apps Script, aperta da Google solo all'account ai.rotary2090). */
+  var LINK_PANNELLO = 'https://script.google.com/macros/s/AKfycby-N4KOWn_1DAhc-0whysDw4NabPQRsbNTZOfzAzu9HFc_neZDZM8Gpu7_mzSAmDYu8/exec';
+  /* Password della pagina: qui c'è solo l'impronta (SHA-256), non la password.
+     Per cambiarla: entra → "Cambiare la password della pagina" → incolla la riga generata al posto di questa. */
+  var HASH_PASSWORD = 'a39c71e6c2335c6472b8485d17341ae7f635ab5dd30714f9e4dff778c19cc950';
+
+  (function () {
+    var a = document.getElementById('pannello');
+    a.href = LINK_PANNELLO; a.target = '_blank'; a.rel = 'noopener';
+    function sha256(txt) {
+      if (!(window.crypto && crypto.subtle)) return Promise.reject(new Error('nocrypto'));
+      return crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt)).then(function (buf) {
+        return Array.prototype.map.call(new Uint8Array(buf), function (b) { return ('0' + b.toString(16)).slice(-2); }).join('');
+      });
+    }
+    var gate = document.getElementById('gate'), box = document.getElementById('admin-box'), msg = document.getElementById('gate-msg');
+    function apri() { gate.hidden = true; box.hidden = false; try { sessionStorage.setItem('ia2090-admin', '1'); } catch (e) {} }
+    try { if (sessionStorage.getItem('ia2090-admin') === '1') apri(); } catch (e) {}
+    gate.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var pw = document.getElementById('gate-pw').value;
+      sha256(pw).then(function (h) {
+        if (h === HASH_PASSWORD) { msg.textContent = ''; apri(); }
+        else { msg.textContent = 'Password non corretta.'; document.getElementById('gate-pw').select(); }
+      }).catch(function () { msg.textContent = 'Questo browser non permette la verifica della password: aprire la pagina dall\'indirizzo https.'; });
+    });
+    document.getElementById('pw-gen').addEventListener('click', function () {
+      var v = document.getElementById('pw-new').value;
+      if (!v) return;
+      sha256(v).then(function (h) { document.getElementById('pw-out').textContent = "var HASH_PASSWORD = '" + h + "';"; });
+    });
+  })();
+</script>
+</body>
+</html>
