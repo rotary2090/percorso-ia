@@ -24,6 +24,7 @@
   .topbar { background: var(--royal-deep); color: var(--on-royal); border-bottom: 3px solid var(--gold); }
   .topbar .wrap { display: flex; align-items: center; gap: 16px; padding-block: 12px; }
   .wrap { width: 100%; max-width: 760px; margin-inline: auto; padding-left: max(20px, env(safe-area-inset-left, 0px)); padding-right: max(20px, env(safe-area-inset-right, 0px)); }
+  main .wrap-wide { max-width: 900px; }
   .brand strong { display: block; font-size: 15px; }
   .brand span { display: block; font-size: 12.5px; opacity: .8; }
   .wheel { width: 40px; height: 40px; border-radius: 50%; background: conic-gradient(from 200deg, var(--gold), #fff3, var(--gold)); position: relative; flex: none; }
@@ -55,6 +56,24 @@
   .pw-change p { margin: 10px 0 12px; }
   .pw-out { display: block; margin-top: 10px; font-size: 12.5px; word-break: break-all; user-select: all; color: var(--fg); }
   .pw-out:empty { display: none; }
+  .panel { margin-top: 28px; display: grid; gap: 22px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 22px 24px; }
+  .card h2 { font-size: 1.05rem; margin-top: 6px; }
+  .card .sub { color: var(--fg-muted); font-size: 14px; margin-top: 4px; }
+  .links { margin: 12px 0 0; padding-left: 18px; font-size: 14.5px; line-height: 1.7; }
+  .links span { color: var(--fg-muted); }
+  .meeting-row { display: grid; grid-template-columns: 1fr; gap: 10px; padding: 14px 0; border-top: 1px solid var(--line); }
+  .meeting-row:first-of-type { border-top: 0; }
+  .meeting-row h3 { font-size: 1rem; }
+  .meeting-row .meta { font-size: 13.5px; color: var(--fg-muted); }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .btn-sm { padding: 9px 14px; font-size: 14px; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: inherit; border: 1.5px solid var(--royal); background: #EAF1FB; color: var(--royal); }
+  .btn-sm:hover { background: var(--royal); color: #fff; }
+  .btn-sm:disabled { opacity: .5; cursor: wait; }
+  .btn-sm.warn { border-color: var(--gold-deep); color: var(--gold-deep); background: #FFF6E5; }
+  .out { white-space: pre-wrap; background: #F6F8FB; border: 1px solid var(--line); border-radius: 8px; padding: 14px; min-height: 56px; font-size: 14.5px; }
+  .out.err { border-color: #D9534F; color: #A12622; }
+  .note { font-size: 13.5px; color: var(--fg-muted); margin-top: 10px; }
   footer { background: var(--royal-ink); color: rgba(255,255,255,.7); font-size: 13px; }
   footer .wrap { padding-block: 16px; }
   footer a { color: #fff; }
@@ -71,10 +90,10 @@
   </div>
 </header>
 <main>
-  <div class="wrap">
+  <div class="wrap wrap-wide">
     <span class="eyebrow">Area riservata</span>
     <h1>Regia del Percorso IA 2026-27</h1>
-    <p class="intro">Solo per la Commissione. Questa pagina non è collegata dal sito pubblico. Servono due chiavi: la password di questa pagina e, subito dopo, l'accesso Google con l'account <span class="mail">ai.rotary2090@gmail.com</span>. Da lì si raggiungono pannello di regia, foglio, Drive, moduli e script.</p>
+    <p class="intro">Solo per la Commissione. Questa pagina non è collegata dal sito pubblico. Basta la password della regia: i pulsanti lavorano con l'account del Distretto (<span class="mail">ai.rotary2090@gmail.com</span>) qualunque sia l'account Google con cui sei collegata.</p>
     <form class="gate" id="gate" autocomplete="off">
       <label for="gate-pw">Password della pagina</label>
       <div class="gate-row">
@@ -83,29 +102,43 @@
       </div>
       <p class="gate-msg" id="gate-msg" aria-live="polite"></p>
     </form>
-    <div class="admin-box" id="admin-box" hidden>
-      <div>
-        <span class="eyebrow">Pannello di regia</span>
-        <h2>Promemoria ai referenti, accessi ai materiali, questionari, riepiloghi e collegamenti al back end</h2>
-        <p>Google chiederà l'accesso: usare l'account del Distretto. Il pannello mostra in testa i link a foglio di regia, cartelle Drive, moduli in modifica e progetto Apps Script.</p>
-      </div>
-      <a class="btn btn-gold" id="pannello" href="#">Apri il pannello di regia</a>
-      <div>
-        <span class="eyebrow">Promemoria</span>
-        <ul>
-          <li>Il link Meet, il registro presenze e l'archivio dei materiali non sono sul sito pubblico: si trovano nella scheda Config del foglio e si inviano via email / WhatsApp.</li>
-          <li>Il registro presenze si condivide solo durante l'incontro, con chi è collegato; i materiali vanno alle email raccolte dal registro.</li>
-        </ul>
-      </div>
-      <details class="pw-change">
-        <summary>Cambiare la password della pagina</summary>
-        <p>Scrivi la nuova password: qui sotto compare la riga da incollare nel file <code>regia.html</code> al posto di quella che inizia con <code>var HASH_PASSWORD</code> (vedi manuale, C.4). Nulla viene salvato finché non aggiorni il file su GitHub.</p>
-        <div class="gate-row">
-          <input type="text" id="pw-new" placeholder="nuova password">
-          <button type="button" class="btn btn-outline" id="pw-gen">Genera la riga</button>
+    <div id="admin-box" hidden>
+      <div class="panel">
+        <div class="card" id="card-stato">
+          <span class="eyebrow">Pannello di regia</span>
+          <h2>Operazioni sugli incontri</h2>
+          <p class="sub" id="stato-sub">Collegamento al back end in corso…</p>
+          <div id="incontri"></div>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn-sm" data-az="aggiornaClubNeiModuli">Aggiorna i club nei moduli</button>
+            <button class="btn-sm warn" data-az="setupIniziale" data-conferma="Il setup iniziale va eseguito una sola volta, alla prima installazione. Continuare?">Setup iniziale</button>
+          </div>
+          <div class="out" id="out" style="margin-top:14px">Pronto.</div>
+          <p class="note">Ogni pulsante lavora con l'account del Distretto, qualunque sia l'account Google con cui sei collegata in questo browser. Le mail partono da ai.rotary2090@gmail.com.</p>
         </div>
-        <code id="pw-out" class="pw-out"></code>
-      </details>
+        <div class="card">
+          <span class="eyebrow">Back end</span>
+          <h2>Foglio, Drive, moduli, script</h2>
+          <ul class="links" id="backend"></ul>
+          <p class="note">Questi collegamenti aprono i file di Google: servono l'account del Distretto, oppure che il file sia stato condiviso con il tuo account (consigliato per il foglio e la cartella Drive). Per i pulsanti qui sopra, invece, non serve nulla.</p>
+        </div>
+        <div class="card">
+          <span class="eyebrow">Promemoria</span>
+          <ul class="links">
+            <li>Link Meet, registro presenze e archivio non sono sul sito pubblico: Meet e registro si trovano qui sotto e nella scheda Config; il registro si incolla nella chat di Meet durante l'incontro.</li>
+            <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri accessi</strong> → <strong>Manda materiali e questionario</strong> (solo alle email raccolte dal registro).</li>
+          </ul>
+          <details class="pw-change">
+            <summary>Cambiare la password della regia</summary>
+            <p>Scrivi la nuova password e premi "Cambia": la password viene aggiornata subito nel back end; qui sotto compare la riga da incollare nel file <code>regia.html</code> su GitHub (al posto di quella che inizia con <code>var HASH_PASSWORD</code>, vedi manuale C.4). Finché non aggiorni il file, questa pagina chiederà ancora la vecchia password ma il back end accetterà solo la nuova: fallo subito.</p>
+            <div class="gate-row">
+              <input type="text" id="pw-new" placeholder="nuova password (almeno 8 caratteri)">
+              <button type="button" class="btn btn-outline" id="pw-gen">Cambia</button>
+            </div>
+            <code id="pw-out" class="pw-out"></code>
+          </details>
+        </div>
+      </div>
     </div>
   </div>
 </main>
@@ -116,15 +149,14 @@
   /* ============================================================
      UNICO PUNTO DA MODIFICARE
      ============================================================ */
-  /* Pannello di regia (app web Apps Script, aperta da Google solo all'account ai.rotary2090). */
-  var LINK_PANNELLO = 'https://script.google.com/macros/s/AKfycby-N4KOWn_1DAhc-0whysDw4NabPQRsbNTZOfzAzu9HFc_neZDZM8Gpu7_mzSAmDYu8/exec';
+  /* App web Apps Script "Percorso IA 2026-27 — regia" (deployment "Esegui come me / Chiunque"):
+     la pagina la chiama con il token derivato dalla password, quindi funziona con qualsiasi account Google (o nessuno). */
+  var URL_REGIA = 'https://script.google.com/macros/s/AKfycby-N4KOWn_1DAhc-0whysDw4NabPQRsbNTZOfzAzu9HFc_neZDZM8Gpu7_mzSAmDYu8/exec';
   /* Password della pagina: qui c'è solo l'impronta (SHA-256), non la password.
-     Per cambiarla: entra → "Cambiare la password della pagina" → incolla la riga generata al posto di questa. */
+     Per cambiarla: entra → "Cambiare la password della regia" → incolla la riga generata al posto di questa. */
   var HASH_PASSWORD = 'a39c71e6c2335c6472b8485d17341ae7f635ab5dd30714f9e4dff778c19cc950';
 
   (function () {
-    var a = document.getElementById('pannello');
-    a.href = LINK_PANNELLO; a.target = '_blank'; a.rel = 'noopener';
     function sha256(txt) {
       if (!(window.crypto && crypto.subtle)) return Promise.reject(new Error('nocrypto'));
       return crypto.subtle.digest('SHA-256', new TextEncoder().encode(txt)).then(function (buf) {
@@ -132,20 +164,92 @@
       });
     }
     var gate = document.getElementById('gate'), box = document.getElementById('admin-box'), msg = document.getElementById('gate-msg');
-    function apri() { gate.hidden = true; box.hidden = false; try { sessionStorage.setItem('ia2090-admin', '1'); } catch (e) {} }
-    try { if (sessionStorage.getItem('ia2090-admin') === '1') apri(); } catch (e) {}
+    var out = document.getElementById('out'), TOKEN = '';
+
+    function mostra(testo, errore) { out.textContent = testo; out.className = 'out' + (errore ? ' err' : ''); }
+    function chiama(azione, n, extra) {
+      var corpo = { token: TOKEN, azione: azione, n: n || 0 };
+      if (extra) for (var k in extra) corpo[k] = extra[k];
+      return fetch(URL_REGIA, { method: 'POST', body: JSON.stringify(corpo), redirect: 'follow' })
+        .then(function (r) { return r.json(); });
+    }
+    function leggiStato() {
+      return fetch(URL_REGIA + '?token=' + encodeURIComponent(TOKEN) + '&azione=stato', { redirect: 'follow' })
+        .then(function (r) { return r.json(); });
+    }
+    function dataIt(v) {
+      if (!v) return 'data da definire';
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v);
+      return m ? m[3] + '/' + m[2] + '/' + m[1] : v;
+    }
+    function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+    function disegna(st) {
+      document.getElementById('stato-sub').textContent = 'Collegato al back end di ' + st.account + '.';
+      var inc = document.getElementById('incontri'); inc.innerHTML = '';
+      st.incontri.forEach(function (i) {
+        var div = document.createElement('div'); div.className = 'meeting-row';
+        div.innerHTML = '<div><h3>' + i.n + ' · ' + esc(i.titolo) + '</h3><div class="meta">' + esc(dataIt(i.data)) + ' · ore 21:00 · ' +
+          (i.meet ? 'Meet: <a href="' + esc(i.meet) + '" target="_blank" rel="noopener">' + esc(i.meet) + '</a>' : 'link Meet non ancora in Config') +
+          (st.moduli.presenze ? ' · <a href="' + esc(st.moduli.presenze) + '" target="_blank" rel="noopener">registro presenze</a>' : '') + '</div></div>' +
+          '<div class="btn-row">' +
+          '<button class="btn-sm" data-az="mandaPromemoria" data-n="' + i.n + '">Manda promemoria diretta</button>' +
+          '<button class="btn-sm" data-az="apriAccessi" data-n="' + i.n + '">Apri accessi</button>' +
+          '<button class="btn-sm" data-az="mandaQuestionario" data-n="' + i.n + '">Manda materiali e questionario</button>' +
+          '<button class="btn-sm" data-az="riepilogo" data-n="' + i.n + '">Riepilogo</button></div>';
+        inc.appendChild(div);
+      });
+      var be = document.getElementById('backend'); be.innerHTML = '';
+      st.backend.forEach(function (l) {
+        var li = document.createElement('li');
+        li.innerHTML = '<a href="' + esc(l.url) + '" target="_blank" rel="noopener">' + esc(l.nome) + '</a> <span>— ' + esc(l.desc) + '</span>';
+        be.appendChild(li);
+      });
+    }
+
+    document.addEventListener('click', function (ev) {
+      var b = ev.target.closest('button[data-az]'); if (!b) return;
+      if (b.dataset.conferma && !document.getElementById('conferma-' + b.dataset.az)) {
+        var ok = document.createElement('button'); ok.className = 'btn-sm warn'; ok.id = 'conferma-' + b.dataset.az; ok.textContent = 'Confermo: ' + b.textContent;
+        ok.dataset.az = b.dataset.az; b.after(ok); mostra(b.dataset.conferma); return;
+      }
+      var tutti = document.querySelectorAll('button[data-az]'); tutti.forEach(function (x) { x.disabled = true; });
+      mostra('Eseguo "' + b.textContent.replace('Confermo: ', '') + '"' + (b.dataset.n ? ' (incontro ' + b.dataset.n + ')' : '') + '… può volerci qualche minuto.');
+      chiama(b.dataset.az, b.dataset.n).then(function (r) {
+        if (r.ok) mostra(r.messaggio || 'Fatto.'); else mostra('Errore: ' + (r.errore || 'sconosciuto'), true);
+        var c = document.getElementById('conferma-' + b.dataset.az); if (c) c.remove();
+      }).catch(function (e) { mostra('Errore di collegamento: ' + e.message, true); })
+        .then(function () { tutti.forEach(function (x) { x.disabled = false; }); });
+    });
+
+    function apri(token) {
+      TOKEN = token; gate.hidden = true; box.hidden = false;
+      try { sessionStorage.setItem('ia2090-token', token); } catch (e) {}
+      leggiStato().then(function (st) {
+        if (st.ok) disegna(st); else { document.getElementById('stato-sub').textContent = 'Il back end rifiuta la password: ' + st.errore; }
+      }).catch(function (e) { document.getElementById('stato-sub').textContent = 'Back end non raggiungibile: ' + e.message; });
+    }
+    try { var t0 = sessionStorage.getItem('ia2090-token'); if (t0) apri(t0); } catch (e) {}
+
     gate.addEventListener('submit', function (ev) {
       ev.preventDefault();
       var pw = document.getElementById('gate-pw').value;
-      sha256(pw).then(function (h) {
-        if (h === HASH_PASSWORD) { msg.textContent = ''; apri(); }
+      Promise.all([sha256(pw), sha256('2090|' + pw)]).then(function (h) {
+        if (h[0] === HASH_PASSWORD) { msg.textContent = ''; apri(h[1]); }
         else { msg.textContent = 'Password non corretta.'; document.getElementById('gate-pw').select(); }
       }).catch(function () { msg.textContent = 'Questo browser non permette la verifica della password: aprire la pagina dall\'indirizzo https.'; });
     });
+
     document.getElementById('pw-gen').addEventListener('click', function () {
       var v = document.getElementById('pw-new').value;
-      if (!v) return;
-      sha256(v).then(function (h) { document.getElementById('pw-out').textContent = "var HASH_PASSWORD = '" + h + "';"; });
+      if (!v || v.length < 8) { document.getElementById('pw-out').textContent = 'Scegli una password di almeno 8 caratteri.'; return; }
+      Promise.all([sha256(v), sha256('2090|' + v)]).then(function (h) {
+        return chiama('cambiaToken', 0, { nuovoToken: h[1] }).then(function (r) {
+          if (!r.ok) { document.getElementById('pw-out').textContent = 'Errore: ' + r.errore; return; }
+          TOKEN = h[1]; try { sessionStorage.setItem('ia2090-token', TOKEN); } catch (e) {}
+          document.getElementById('pw-out').textContent = r.messaggio + "\n\nvar HASH_PASSWORD = '" + h[0] + "';";
+        });
+      }).catch(function (e) { document.getElementById('pw-out').textContent = 'Errore: ' + e.message; });
     });
   })();
 </script>
