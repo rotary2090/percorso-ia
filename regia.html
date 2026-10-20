@@ -180,7 +180,10 @@
     function dataIt(v) {
       if (!v) return 'data da definire';
       var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(v);
-      return m ? m[3] + '/' + m[2] + '/' + m[1] : v;
+      if (m) return m[3] + '/' + m[2] + '/' + m[1];
+      var d = new Date(v);
+      if (!isNaN(d)) return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2) + '/' + d.getFullYear();
+      return v;
     }
     function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
