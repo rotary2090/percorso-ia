@@ -127,6 +127,7 @@
           <ul class="links">
             <li>Link Meet, registro presenze e archivio non sono sul sito pubblico: Meet e registro si trovano qui sotto e nella scheda Config; il registro si incolla nella chat di Meet durante l'incontro.</li>
             <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri accessi</strong> → <strong>Manda materiali e questionario</strong> (solo alle email raccolte dal registro).</li>
+            <li><strong>Piano B della diretta.</strong> Il Meet lo avvia chi l'ha creato oppure uno dei co-organizzatori indicati in Config (si collegano al link normale e la riunione parte). Solo se il link normale non funziona proprio: aprire il <em>link di riserva</em> (creato da un altro account della Commissione) e comunicarlo subito ai referenti nel gruppo WhatsApp.</li>
           </ul>
           <details class="pw-change">
             <summary>Cambiare la password della regia</summary>
@@ -194,7 +195,10 @@
         var div = document.createElement('div'); div.className = 'meeting-row';
         div.innerHTML = '<div><h3>' + i.n + ' · ' + esc(i.titolo) + '</h3><div class="meta">' + esc(dataIt(i.data)) + ' · ore 21:00 · ' +
           (i.meet ? 'Meet: <a href="' + esc(i.meet) + '" target="_blank" rel="noopener">' + esc(i.meet) + '</a>' : 'link Meet non ancora in Config') +
-          (st.moduli.presenze ? ' · <a href="' + esc(st.moduli.presenze) + '" target="_blank" rel="noopener">registro presenze</a>' : '') + '</div></div>' +
+          (st.moduli.presenze ? ' · <a href="' + esc(st.moduli.presenze) + '" target="_blank" rel="noopener">registro presenze</a>' : '') + '</div>' +
+          '<div class="meta">' + (i.organizzatore ? 'Meet creato da <strong>' + esc(i.organizzatore) + '</strong>' : '<strong>Organizzatore del Meet non indicato in Config</strong>') +
+          (i.coorganizzatori ? ' · può avviarlo anche: ' + esc(i.coorganizzatori) : ' · nessun co-organizzatore indicato') +
+          (i.riserva ? ' · <a href="' + esc(i.riserva) + '" target="_blank" rel="noopener">link di riserva</a>' : ' · nessun link di riserva') + '</div></div>' +
           '<div class="btn-row">' +
           '<button class="btn-sm" data-az="mandaPromemoria" data-n="' + i.n + '">Manda promemoria diretta</button>' +
           '<button class="btn-sm" data-az="apriAccessi" data-n="' + i.n + '">Apri accessi</button>' +
