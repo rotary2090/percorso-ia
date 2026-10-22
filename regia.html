@@ -74,6 +74,11 @@
   .out { white-space: pre-wrap; background: #F6F8FB; border: 1px solid var(--line); border-radius: 8px; padding: 14px; min-height: 56px; font-size: 14.5px; }
   .out.err { border-color: #D9534F; color: #A12622; }
   .note { font-size: 13.5px; color: var(--fg-muted); margin-top: 10px; }
+  .loading { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding: 16px 18px; background: #F6F8FB; border: 1px solid var(--line); border-radius: 8px; font-size: 15px; }
+  .loading .spin { width: 20px; height: 20px; border: 3px solid var(--line); border-top-color: var(--royal); border-radius: 50%; animation: spin .9s linear infinite; flex: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading.err { border-color: #D9534F; color: #A12622; background: #FFF5F5; }
+  .loading.err .spin { display: none; }
   .wa { display: none; margin-top: 6px; }
   .wa.open { display: block; }
   .wa textarea { width: 100%; min-height: 120px; font: inherit; font-size: 13.5px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 6px; resize: vertical; }
@@ -112,7 +117,9 @@
         <div class="card" id="card-stato">
           <span class="eyebrow">Pannello di regia</span>
           <h2>Operazioni sugli incontri</h2>
-          <p class="sub" id="stato-sub">Collegamento al back end in corso…</p>
+          <p class="sub" id="stato-sub">Lettura del foglio di regia in corso…</p>
+          <div class="loading" id="loading"><span class="spin" aria-hidden="true"></span><span id="loading-msg">Sto leggendo il foglio di regia e i collegamenti al back end: pochi secondi.</span></div>
+          <div id="panel-body" hidden>
           <div class="chan" id="canali"></div>
           <div id="incontri"></div>
           <div class="btn-row" style="margin-top:14px">
@@ -121,8 +128,9 @@
           </div>
           <div class="out" id="out" style="margin-top:14px">Pronto.</div>
           <p class="note">Ogni pulsante lavora con l'account del Distretto, qualunque sia l'account Google con cui sei collegata in questo browser. Le mail partono da ai.rotary2090@gmail.com.</p>
+          </div>
         </div>
-        <div class="card">
+        <div class="card" id="card-backend" hidden>
           <span class="eyebrow">Back end</span>
           <h2>Foglio, Drive, moduli, script</h2>
           <ul class="links" id="backend"></ul>
@@ -205,6 +213,9 @@
     }
     function disegna(st) {
       document.getElementById('stato-sub').textContent = 'Collegato al back end di ' + st.account + '.';
+      document.getElementById('loading').hidden = true;
+      document.getElementById('panel-body').hidden = false;
+      document.getElementById('card-backend').hidden = false;
       document.getElementById('canali').innerHTML =
         '<div><strong>Canale 1 — email:</strong> <span>mailing list con ' + st.mailingList + ' indirizz' + (st.mailingList === 1 ? 'o' : 'i') + ' (scheda "Mailing list" del foglio)</span></div>' +
         '<div><strong>Canale 2 — WhatsApp:</strong> <span>' + (st.whatsapp ? '<a href="' + esc(st.whatsapp) + '" target="_blank" rel="noopener">gruppo dei referenti</a>' : 'gruppo dei referenti (link non in Config)') + '</span></div>';
@@ -264,9 +275,14 @@
     function apri(token) {
       TOKEN = token; gate.hidden = true; box.hidden = false;
       try { sessionStorage.setItem('ia2090-token', token); } catch (e) {}
+      function fallito(testo) {
+        document.getElementById('stato-sub').textContent = 'Collegamento non riuscito.';
+        var l = document.getElementById('loading'); l.classList.add('err');
+        document.getElementById('loading-msg').textContent = testo + ' Ricarica la pagina per riprovare.';
+      }
       leggiStato().then(function (st) {
-        if (st.ok) disegna(st); else { document.getElementById('stato-sub').textContent = 'Il back end rifiuta la password: ' + st.errore; }
-      }).catch(function (e) { document.getElementById('stato-sub').textContent = 'Back end non raggiungibile: ' + e.message; });
+        if (st.ok) disegna(st); else fallito('Il back end rifiuta la password: ' + (st.errore || '') + '.');
+      }).catch(function (e) { fallito('Back end non raggiungibile (' + e.message + ').'); });
     }
     try { var t0 = sessionStorage.getItem('ia2090-token'); if (t0) apri(t0); } catch (e) {}
 
