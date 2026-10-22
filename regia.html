@@ -74,6 +74,11 @@
   .out { white-space: pre-wrap; background: #F6F8FB; border: 1px solid var(--line); border-radius: 8px; padding: 14px; min-height: 56px; font-size: 14.5px; }
   .out.err { border-color: #D9534F; color: #A12622; }
   .note { font-size: 13.5px; color: var(--fg-muted); margin-top: 10px; }
+  .wa { display: none; margin-top: 6px; }
+  .wa.open { display: block; }
+  .wa textarea { width: 100%; min-height: 120px; font: inherit; font-size: 13.5px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 6px; resize: vertical; }
+  .chan { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; margin-top: 10px; }
+  .chan span { color: var(--fg-muted); }
   footer { background: var(--royal-ink); color: rgba(255,255,255,.7); font-size: 13px; }
   footer .wrap { padding-block: 16px; }
   footer a { color: #fff; }
@@ -108,6 +113,7 @@
           <span class="eyebrow">Pannello di regia</span>
           <h2>Operazioni sugli incontri</h2>
           <p class="sub" id="stato-sub">Collegamento al back end in corso…</p>
+          <div class="chan" id="canali"></div>
           <div id="incontri"></div>
           <div class="btn-row" style="margin-top:14px">
             <button class="btn-sm" data-az="aggiornaClubNeiModuli">Aggiorna i club nei moduli</button>
@@ -125,7 +131,8 @@
         <div class="card">
           <span class="eyebrow">Promemoria</span>
           <ul class="links">
-            <li>Link Meet, registro presenze e archivio non sono sul sito pubblico: Meet e registro si trovano qui sotto e nella scheda Config; il registro si incolla nella chat di Meet durante l'incontro.</li>
+            <li><strong>Come arriva il link ai soci (due canali).</strong> 1) <em>Invito via email</em> a tutta la mailing list (scheda "Mailing list" del foglio, costruita con i nominativi segnalati dai club): pulsante "Manda invito via email". 2) <em>Gruppo WhatsApp dei referenti</em>: pulsante "Testo per WhatsApp", copia e incolla nel gruppo. I referenti girano il link ai soci del club. Il link Meet non va sul sito pubblico.</li>
+            <li>Il registro presenze si incolla nella chat di Meet durante l'incontro (link qui sotto e in Config).</li>
             <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri accessi</strong> → <strong>Manda materiali e questionario</strong> (solo alle email raccolte dal registro).</li>
             <li><strong>Piano B della diretta.</strong> Il Meet lo avvia chi l'ha creato oppure uno dei co-organizzatori indicati in Config (si collegano al link normale e la riunione parte). Solo se il link normale non funziona proprio: aprire il <em>link di riserva</em> (creato da un altro account della Commissione) e comunicarlo subito ai referenti nel gruppo WhatsApp.</li>
           </ul>
@@ -188,8 +195,19 @@
     }
     function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
 
+    function testoWa(i, st) {
+      return 'Percorso IA 2026-27 — incontro ' + i.n + ': ' + i.titolo + '\n' +
+        dataIt(i.data) + ' alle 21:00, online (un\'ora: tre pillole e mezz\'ora di confronto).\n' +
+        'Link per partecipare: ' + (i.meet || '[link Meet da inserire in Config]') + '\n' +
+        'Non serve iscriversi: giratelo ai soci del vostro club, tutti sono benvenuti.\n' +
+        (st.moduli.presenze ? 'Chi vuole ricevere registrazione e materiali lascia la sua email nel registro presenze durante l\'incontro (facoltativo).\n' : '') +
+        'Info: https://sites.google.com/view/percorso-ia-2026-27';
+    }
     function disegna(st) {
       document.getElementById('stato-sub').textContent = 'Collegato al back end di ' + st.account + '.';
+      document.getElementById('canali').innerHTML =
+        '<div><strong>Canale 1 — email:</strong> <span>mailing list con ' + st.mailingList + ' indirizz' + (st.mailingList === 1 ? 'o' : 'i') + ' (scheda "Mailing list" del foglio)</span></div>' +
+        '<div><strong>Canale 2 — WhatsApp:</strong> <span>' + (st.whatsapp ? '<a href="' + esc(st.whatsapp) + '" target="_blank" rel="noopener">gruppo dei referenti</a>' : 'gruppo dei referenti (link non in Config)') + '</span></div>';
       var inc = document.getElementById('incontri'); inc.innerHTML = '';
       st.incontri.forEach(function (i) {
         var div = document.createElement('div'); div.className = 'meeting-row';
@@ -200,10 +218,14 @@
           (i.coorganizzatori ? ' · può avviarlo anche: ' + esc(i.coorganizzatori) : ' · nessun co-organizzatore indicato') +
           (i.riserva ? ' · <a href="' + esc(i.riserva) + '" target="_blank" rel="noopener">link di riserva</a>' : ' · nessun link di riserva') + '</div></div>' +
           '<div class="btn-row">' +
-          '<button class="btn-sm" data-az="mandaPromemoria" data-n="' + i.n + '">Manda promemoria diretta</button>' +
+          '<button class="btn-sm" data-az="mandaPromemoria" data-n="' + i.n + '">Manda invito via email (mailing list)</button>' +
+          '<button class="btn-sm" type="button" data-wa="' + i.n + '">Testo per WhatsApp</button>' +
           '<button class="btn-sm" data-az="apriAccessi" data-n="' + i.n + '">Apri accessi</button>' +
           '<button class="btn-sm" data-az="mandaQuestionario" data-n="' + i.n + '">Manda materiali e questionario</button>' +
-          '<button class="btn-sm" data-az="riepilogo" data-n="' + i.n + '">Riepilogo</button></div>';
+          '<button class="btn-sm" data-az="riepilogo" data-n="' + i.n + '">Riepilogo</button></div>' +
+          '<div class="wa" id="wa-' + i.n + '"><textarea readonly>' + esc(testoWa(i, st)) + '</textarea>' +
+          '<div class="btn-row" style="margin-top:6px"><button class="btn-sm" type="button" data-copy="wa-' + i.n + '">Copia il testo</button>' +
+          (st.whatsapp ? '<a class="btn-sm" href="' + esc(st.whatsapp) + '" target="_blank" rel="noopener" style="text-decoration:none">Apri il gruppo WhatsApp</a>' : '') + '</div></div>';
         inc.appendChild(div);
       });
       var be = document.getElementById('backend'); be.innerHTML = '';
@@ -215,6 +237,16 @@
     }
 
     document.addEventListener('click', function (ev) {
+      var w = ev.target.closest('button[data-wa]');
+      if (w) { var box = document.getElementById('wa-' + w.dataset.wa); box.classList.toggle('open'); return; }
+      var c = ev.target.closest('button[data-copy]');
+      if (c) {
+        var ta = document.querySelector('#' + c.dataset.copy + ' textarea'); ta.select();
+        var done = function () { c.textContent = 'Copiato'; setTimeout(function () { c.textContent = 'Copia il testo'; }, 2000); };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(ta.value).then(done, function () { document.execCommand('copy'); done(); });
+        else { document.execCommand('copy'); done(); }
+        return;
+      }
       var b = ev.target.closest('button[data-az]'); if (!b) return;
       if (b.dataset.conferma && !document.getElementById('conferma-' + b.dataset.az)) {
         var ok = document.createElement('button'); ok.className = 'btn-sm warn'; ok.id = 'conferma-' + b.dataset.az; ok.textContent = 'Confermo: ' + b.textContent;
