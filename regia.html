@@ -280,9 +280,21 @@
         var l = document.getElementById('loading'); l.classList.add('err');
         document.getElementById('loading-msg').textContent = testo + ' Ricarica la pagina per riprovare.';
       }
+      /* Mostra subito i dati dell'ultima apertura (salvati in questo browser), poi li aggiorna dal back end. */
+      var vecchio = null;
+      try { vecchio = JSON.parse(localStorage.getItem('ia2090-stato') || 'null'); } catch (e) {}
+      if (vecchio && vecchio.ok) {
+        disegna(vecchio);
+        document.getElementById('stato-sub').textContent = 'Dati dell\'ultima apertura: aggiornamento dal back end in corso…';
+      }
       leggiStato().then(function (st) {
-        if (st.ok) disegna(st); else fallito('Il back end rifiuta la password: ' + (st.errore || '') + '.');
-      }).catch(function (e) { fallito('Back end non raggiungibile (' + e.message + ').'); });
+        if (st.ok) { disegna(st); try { localStorage.setItem('ia2090-stato', JSON.stringify(st)); } catch (e) {} }
+        else if (!vecchio) fallito('Il back end rifiuta la password: ' + (st.errore || '') + '.');
+        else document.getElementById('stato-sub').textContent = 'Aggiornamento non riuscito: ' + (st.errore || '') + ' (dati dell\'ultima apertura).';
+      }).catch(function (e) {
+        if (!vecchio) fallito('Back end non raggiungibile (' + e.message + ').');
+        else document.getElementById('stato-sub').textContent = 'Back end non raggiungibile: dati dell\'ultima apertura.';
+      });
     }
     try { var t0 = sessionStorage.getItem('ia2090-token'); if (t0) apri(t0); } catch (e) {}
 
