@@ -141,7 +141,7 @@
           <ul class="links">
             <li><strong>Come arriva il link ai soci (due canali).</strong> 1) <em>Invito via email</em> a tutta la mailing list (scheda "Mailing list" del foglio, costruita con i nominativi segnalati dai club): pulsante "Manda invito via email". 2) <em>Gruppo WhatsApp dei referenti</em>: pulsante "Testo per WhatsApp", copia e incolla nel gruppo. I referenti girano il link ai soci del club. Il link Meet non va sul sito pubblico.</li>
             <li>Il registro presenze si incolla nella chat di Meet durante l'incontro (link qui sotto e in Config).</li>
-            <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri accessi</strong> → <strong>Manda materiali e questionario</strong> (solo alle email raccolte dal registro).</li>
+            <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri accessi</strong> → <strong>Manda materiali e questionario</strong>. Regola: i materiali vanno solo a chi è <strong>in mailing list E</strong> ha compilato il <strong>registro di quell'incontro</strong>; chi è nel registro ma non in mailing list viene elencato nel riquadro, senza accesso.</li>
             <li><strong>Piano B della diretta.</strong> Il Meet lo avvia chi l'ha creato oppure uno dei co-organizzatori indicati in Config (si collegano al link normale e la riunione parte). Solo se il link normale non funziona proprio: aprire il <em>link di riserva</em> (creato da un altro account della Commissione) e comunicarlo subito ai referenti nel gruppo WhatsApp.</li>
           </ul>
           <details class="pw-change">
@@ -208,7 +208,7 @@
         dataIt(i.data) + ' alle 21:00, online (un\'ora: tre pillole e mezz\'ora di confronto).\n' +
         'Link per partecipare: ' + (i.meet || '[link Meet da inserire in Config]') + '\n' +
         'Non serve iscriversi: giratelo ai soci del vostro club, tutti sono benvenuti.\n' +
-        (st.moduli.presenze ? 'Chi vuole ricevere registrazione e materiali lascia la sua email nel registro presenze durante l\'incontro (facoltativo).\n' : '') +
+        (st.moduli.presenze ? 'Chi vuole ricevere registrazione e materiali lascia la sua email nel registro presenze durante l\'incontro (facoltativo): i materiali vanno a chi è nella mailing list del percorso e ha partecipato.\n' : '') +
         'Info: https://sites.google.com/view/percorso-ia-2026-27';
     }
     function disegna(st) {
