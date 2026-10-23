@@ -152,6 +152,30 @@
   .checklist strong { display: block; }
   .checklist span { color: rgba(255,255,255,.8); font-size: 14.5px; }
 
+  /* ---------- Schede (una sezione per volta) ---------- */
+  .topnav a[aria-current="page"] { border-bottom-color: var(--gold); opacity: 1; }
+  .menu-five { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px; }
+  .menu-five .tile { padding: 24px 20px 22px; }
+  .menu-five .tile h3 { font-size: 1.05rem; }
+  .menu-five .tile p { font-size: 14px; }
+  .crumb { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; text-decoration: none; color: var(--royal); margin-bottom: 18px; }
+  .crumb:hover { text-decoration: underline; }
+  .on-dark .crumb { color: var(--gold); }
+  .back-row { display: flex; justify-content: flex-start; margin-top: clamp(32px, 4vw, 48px); padding-top: 24px; border-top: 1px solid var(--line); }
+  .on-dark .back-row { border-top-color: rgba(255,255,255,.2); }
+  .band-royal .back-row, .band-royal .crumb { grid-column: 1 / -1; }
+  .band-royal .crumb { margin-bottom: 0; }
+  .mp-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; margin-top: 8px; }
+  .mp-grid .feat { min-width: 0; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 20px 18px; }
+  .mp-grid .feat b { display: block; font-size: 1.02rem; margin-top: 8px; }
+  .mp-grid .feat span { display: block; color: var(--fg-muted); font-size: 14.5px; margin-top: 6px; }
+  .mp-grid .ic { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: 20px; background: linear-gradient(135deg, #EAF1FB, #F6F9FD); }
+  .mp-cta { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 30px; }
+  .mp-cta p { color: var(--fg-muted); font-size: 15px; max-width: 52ch; }
+  .wordmark em { font-style: normal; color: var(--gold-deep); }
+  .on-dark .wordmark em { color: var(--gold); }
+  .next.closed .pulse { background: var(--gold); box-shadow: none; animation: none; }
+
   /* ---------- Piè di pagina ---------- */
   footer { background: var(--royal-ink); color: rgba(255,255,255,.78); font-size: 14px; }
   footer .wrap { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 32px; padding-block: 48px; }
@@ -168,6 +192,7 @@
   @media (max-width: 1000px) {
     .hero .wrap, .band-royal .wrap { grid-template-columns: 1fr; }
     .steps, .menu { grid-template-columns: 1fr 1fr; }
+    .mp-grid { grid-template-columns: 1fr 1fr; }
     footer .wrap { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 760px) {
@@ -181,7 +206,7 @@
   }
   @media (max-width: 600px) {
     body { font-size: 16px; }
-    .steps, .menu, .agenda, footer .wrap { grid-template-columns: 1fr; }
+    .steps, .menu, .agenda, .mp-grid, footer .wrap { grid-template-columns: 1fr; }
     .hero { min-height: 0; }
     .meeting { padding: 22px 20px; }
     .next { padding: 22px 20px; }
@@ -205,28 +230,30 @@
         <span>Commissione Innovazione Digitale</span>
       </div>
     </a>
-    <nav class="topnav" aria-label="Sezioni della pagina">
-      <a href="#come-funziona">Come funziona</a>
-      <a href="#calendario">Calendario</a>
-      <a href="#showcase">Showcase 2027</a>
-      <a href="#referenti">Referenti di club</a>
-      <a data-link="piazza" href="#" class="nav-piazza">mAIplace</a>
+    <nav class="topnav" aria-label="Sezioni del sito">
+      <a href="#top" data-view="top">Home</a>
+      <a href="#come-funziona" data-view="come-funziona">Come funziona</a>
+      <a href="#calendario" data-view="calendario">Calendario</a>
+      <a href="#showcase" data-view="showcase">Showcase 2027</a>
+      <a href="#referenti" data-view="referenti">Referenti di club</a>
+      <a href="#maiplace" data-view="maiplace" class="nav-piazza">mAIplace</a>
     </nav>
     <details class="menu-toggle">
       <summary aria-label="Apri il menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg> Menu</summary>
       <div class="sheet">
+        <a href="#top">Home</a>
         <a href="#come-funziona">Come funziona</a>
         <a href="#calendario">Calendario</a>
         <a href="#showcase">Showcase 2027</a>
         <a href="#referenti">Referenti di club</a>
-        <a data-link="piazza" href="#">mAIplace</a>
+        <a href="#maiplace">mAIplace</a>
       </div>
     </details>
   </div>
 </header>
 <a id="fs-bar" class="fs-bar" href="#" target="_blank" rel="noopener" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Stai vedendo la versione compatta: apri la pagina a schermo intero</a>
 
-<section class="hero on-dark" id="top">
+<section class="hero on-dark" id="top" data-home>
   <canvas id="net" aria-hidden="true"></canvas>
   <div class="wrap">
     <div>
@@ -252,7 +279,7 @@
   </div>
 </section>
 
-<div class="facts">
+<div class="facts" data-home>
   <div class="wrap">
     <div class="fact"><strong>4</strong><span>incontri online, uno al mese</span></div>
     <div class="fact"><strong>60'</strong><span>per incontro, dalle 21:00 alle 22:00</span></div>
@@ -261,7 +288,54 @@
   </div>
 </div>
 
-<section class="band" id="come-funziona">
+<section class="band" id="esplora" data-home>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow">Il sito</span>
+      <h2>Cosa trovi qui</h2>
+      <p>Cinque schede, una per argomento. Da ciascuna si torna alla home con un clic.</p>
+    </div>
+    <div class="menu menu-five">
+      <a class="tile" href="#come-funziona">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div>
+        <span class="who">Il formato</span>
+        <h3>Come funziona</h3>
+        <p>Un'ora: tre pillole, mezz'ora di confronto, materiali il giorno dopo a chi era presente.</p>
+        <span class="go">Apri →</span>
+      </a>
+      <a class="tile" href="#calendario">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg></div>
+        <span class="who">Le date</span>
+        <h3>Calendario</h3>
+        <p>I quattro incontri da novembre a febbraio, sempre alle 21:00, online.</p>
+        <span class="go">Apri →</span>
+      </a>
+      <a class="tile primary" href="#showcase">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6.5 7 1-5 5 1.2 7L12 18l-6.2 3.5L7 14.5l-5-5 7-1z"/></svg></div>
+        <span class="who">Per i club</span>
+        <h3>Showcase 2027</h3>
+        <p>Candida il progetto AI del tuo club: a fine anno i migliori sono presentati al Distretto.</p>
+        <span class="go">Apri →</span>
+      </a>
+      <a class="tile" href="#referenti">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.5a3.5 3.5 0 0 1 0 7M21.5 20a6.5 6.5 0 0 0-4.5-6.2"/></svg></div>
+        <span class="who">Per i referenti</span>
+        <h3>Referenti di club</h3>
+        <p>I quattro compiti del referente: poche azioni, nessun carico tecnico.</p>
+        <span class="go">Apri →</span>
+      </a>
+      <a class="tile primary" href="#maiplace">
+        <div class="ico" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><circle cx="4.5" cy="7" r="2"/><circle cx="19.5" cy="7" r="2"/><circle cx="4.5" cy="17" r="2"/><circle cx="19.5" cy="17" r="2"/><path d="M6.3 8l3.4 2.3M17.7 8l-3.4 2.3M6.3 16l3.4-2.3M17.7 16l-3.4-2.3"/></svg></div>
+        <span class="who">Per i soci</span>
+        <h3 class="wordmark">m<em>AI</em>place</h3>
+        <p>Meet. Share. Grow. Lo spazio dei soci: bacheca, libreria, vetrina dei club, notiziario.</p>
+        <span class="go">Apri →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="come-funziona" data-view-section>
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Come funziona</span>
@@ -288,7 +362,7 @@
   </div>
 </section>
 
-<section class="band band-alt" id="calendario">
+<section class="band band-alt" id="calendario" data-view-section>
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Calendario</span>
@@ -324,7 +398,7 @@
   </div>
 </section>
 
-<section class="band" id="showcase">
+<section class="band" id="showcase" data-view-section>
   <div class="wrap">
     <div class="section-head">
       <span class="eyebrow">Showcase 2027</span>
@@ -343,7 +417,7 @@
   </div>
 </section>
 
-<section class="band band-royal on-dark" id="referenti">
+<section class="band band-royal on-dark" id="referenti" data-view-section>
   <div class="wrap">
     <div>
       <span class="eyebrow">Referenti di club</span>
@@ -359,6 +433,25 @@
   </div>
 </section>
 
+<section class="band band-alt" id="maiplace" data-view-section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow" style="text-transform:none;letter-spacing:.08em">mAIplace · Meet. Share. Grow.</span>
+      <h2 class="wordmark">m<em>AI</em>place, lo spazio dei soci del percorso</h2>
+      <p>Il luogo dove il percorso continua tra un incontro e l'altro e dopo l'ultimo: avvisi della Commissione, registrazioni e slide degli incontri, risorse per usare l'intelligenza artificiale nel club, i progetti dei club del Distretto. Riservato ai soci, senza password: si entra con la propria email.</p>
+    </div>
+    <div class="mp-grid">
+      <div class="feat"><div class="ic" aria-hidden="true">📌</div><b>Bacheca</b><span>Avvisi, incontri in arrivo, idee e domande, in colonne. Un clic su "mi interessa" dice alla Commissione cosa conta.</span></div>
+      <div class="feat"><div class="ic" aria-hidden="true">📚</div><b>Libreria</b><span>Pillole registrate, slide, guide e prompt pronti, ordinati per tema.</span></div>
+      <div class="feat"><div class="ic" aria-hidden="true">🏅</div><b>Vetrina dei club</b><span>I progetti con l'IA raccontati dai club, con chi contattare per replicarli.</span></div>
+      <div class="feat"><div class="ic" aria-hidden="true">✉️</div><b>Notiziario</b><span>Ogni tanto, una mail con le novità, lo stesso testo che trovi nella pagina.</span></div>
+    </div>
+    <div class="mp-cta">
+      <a class="btn btn-gold" data-link="piazza" href="#">Entra in mAIplace</a>
+      <p>Scrivi l'email con cui ricevi gli inviti o con cui hai compilato il registro presenze: ricevi un link personale che vale sei mesi. Non hai mai partecipato? Nella pagina c'è "Chiedi l'accesso": la Commissione approva e ti manda il link.</p>
+    </div>
+  </div>
+</section>
 
 <footer>
   <div class="wrap">
@@ -373,6 +466,7 @@
     <div>
       <h4>Percorso IA 2026-27</h4>
       <ul>
+        <li><a href="#top">Home</a></li>
         <li><a href="#come-funziona">Come funziona</a></li>
         <li><a href="#calendario">Calendario</a></li>
         <li><a href="#showcase">Showcase 2027</a></li>
@@ -418,9 +512,12 @@
     /* Lo spazio dei soci (accesso con link personale via email). Se non dovesse funzionare, puntare qui un'altra pagina: la voce di menu resta. */
     piazza:     'https://rotary2090.github.io/percorso-ia/maiplace.html'
   };
-  /* Prossimo incontro mostrato nel riquadro in alto (numero 1-4) e date. */
-  var PROSSIMO = 1;
+  /* Date dei quattro incontri. Il riquadro "Prossimo incontro" si aggiorna da solo: dal giorno dopo ciascun incontro
+     passa al successivo (orario di Roma); dopo l'ultimo mostra la chiusura del percorso. PROSSIMO = 0 vuol dire automatico;
+     mettere 1-4 solo per forzare a mano un incontro (per esempio se una data slitta e non è ancora stata cambiata qui). */
+  var PROSSIMO = 0;
   var DATE = { 1: 'Mercoledì 4 novembre 2026', 2: 'Mercoledì 9 dicembre 2026', 3: 'Martedì 12 gennaio 2027', 4: 'Mercoledì 24 febbraio 2027' };
+  var DATE_ISO = { 1: '2026-11-04', 2: '2026-12-09', 3: '2027-01-12', 4: '2027-02-24' };
   var TITOLI = {
     1: 'AI senza paura: cos\'è, cosa fa, cosa non fa',
     2: 'L\'AI al servizio del club',
@@ -450,9 +547,51 @@
       var d = DATE[el.getAttribute('data-date')];
       if (d) el.textContent = d + ' · ore 21:00';
     });
-    var t = document.getElementById('next-title'), d = document.getElementById('next-date');
-    if (t && TITOLI[PROSSIMO]) t.textContent = PROSSIMO + ' · ' + TITOLI[PROSSIMO];
-    if (d) d.textContent = (DATE[PROSSIMO] || 'data da definire') + ', ore 21:00';
+    /* Prossimo incontro: automatico in base alla data di oggi (Europe/Rome). */
+    var oggi = '';
+    try { oggi = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' }); } catch (e) { oggi = new Date().toISOString().slice(0, 10); }
+    var prossimo = PROSSIMO;
+    if (!prossimo) { for (var k = 1; k <= 4; k++) { if (DATE_ISO[k] && DATE_ISO[k] >= oggi) { prossimo = k; break; } } }
+    var t = document.getElementById('next-title'), d = document.getElementById('next-date'), box = document.querySelector('.next');
+    if (prossimo && TITOLI[prossimo]) {
+      if (t) t.textContent = prossimo + ' · ' + TITOLI[prossimo];
+      if (d) d.textContent = (DATE[prossimo] || 'data da definire') + ', ore 21:00';
+    } else {
+      if (box) box.classList.add('closed');
+      var ey = box && box.querySelector('.eyebrow'); if (ey) ey.textContent = 'Percorso 2026-27 concluso';
+      if (t) t.textContent = 'Prossima tappa: Showcase 2027';
+      if (d) d.textContent = 'primavera 2027, data in arrivo';
+      var nn = box && box.querySelector('.next-note'); if (nn) nn.textContent = 'I quattro incontri si sono svolti. I club possono candidare il proprio progetto allo Showcase 2027 dalla scheda dedicata; i materiali degli incontri sono in mAIplace per chi era presente.';
+    }
+
+    /* ---------- Schede: una sezione per volta, la home mostra hero, numeri e le cinque schede ---------- */
+    var VISTE = ['come-funziona', 'calendario', 'showcase', 'referenti', 'maiplace'];
+    var home = document.querySelectorAll('[data-home]'), viste = document.querySelectorAll('[data-view-section]');
+    viste.forEach(function (sec) {
+      var w = sec.querySelector('.wrap'), dark = sec.classList.contains('on-dark');
+      var c = document.createElement('a'); c.className = 'crumb'; c.href = '#top'; c.innerHTML = '&larr; Home';
+      if (w) w.insertBefore(c, w.firstChild);
+      var r = document.createElement('div'); r.className = 'back-row';
+      r.innerHTML = '<a class="btn ' + (dark ? 'btn-ghost' : 'btn-outline') + '" href="#top">&larr; Torna alla home</a>';
+      if (w) w.appendChild(r);
+    });
+    var primaVolta = true;
+    function mostra() {
+      var id = (location.hash || '').replace('#', '');
+      var isVista = VISTE.indexOf(id) >= 0;
+      home.forEach(function (el) { el.hidden = isVista; });
+      viste.forEach(function (sec) { sec.hidden = !(isVista && sec.id === id); });
+      document.querySelectorAll('.topnav a[data-view]').forEach(function (a) {
+        if (a.getAttribute('data-view') === (isVista ? id : 'top')) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
+      });
+      if (!primaVolta) {
+        if (embedded) { var tb = document.querySelector('.topbar'); if (tb) { try { tb.scrollIntoView({ block: 'start' }); } catch (e) {} } }
+        else { try { window.scrollTo({ top: 0, behavior: 'auto' }); } catch (e) {} }
+      }
+      primaVolta = false;
+    }
+    window.addEventListener('hashchange', mostra);
+    mostra();
 
     /* Menu mobile: si chiude dopo la scelta. */
     var mt = document.querySelector('.menu-toggle');
