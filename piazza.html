@@ -316,7 +316,10 @@
     function toast(t) { var e = $('toast'); e.textContent = t; e.classList.add('on'); clearTimeout(e._t); e._t = setTimeout(function () { e.classList.remove('on'); }, 2800); }
     function api(azione, corpo) {
       corpo = corpo || {}; corpo.azione = azione; if (TOKEN) corpo.t = TOKEN;
-      return fetch(URL_API, { method: 'POST', body: JSON.stringify(corpo), redirect: 'follow' }).then(function (r) { return r.json(); });
+      var dati = JSON.stringify(corpo);
+      function tenta() { return fetch(URL_API, { method: 'POST', body: dati, redirect: 'follow' }).then(function (r) { return r.json(); }); }
+      /* Un secondo tentativo dopo un attimo: la prima chiamata allo script, a freddo, ogni tanto cade. */
+      return tenta().catch(function () { return new Promise(function (ok) { setTimeout(ok, 1500); }).then(tenta); });
     }
     function linkSicuro(u) { u = String(u || '').trim(); return /^https?:\/\//i.test(u) ? u : ''; }
     function vai(v) {
