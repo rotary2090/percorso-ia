@@ -164,7 +164,7 @@
             <div class="btn-row" style="margin-top:10px"><button class="btn-sm warn" data-az="piazzaSetup" data-conferma="Attivo la Piazza: creo le schede e i contenuti iniziali. Continuare?">Attiva la Piazza (setup)</button></div>
           </div>
           <div id="pz-on" hidden>
-            <div class="pz-kpi"><span><b id="pz-membri">0</b> membri</span><span><b id="pz-richieste">0</b> richieste in attesa</span><span><b id="pz-feedback">0</b> messaggi da gestire</span><span id="pz-scrittura"></span><span><a id="pz-link" href="#" target="_blank" rel="noopener">Apri la Piazza</a></span></div>
+            <div class="pz-kpi"><span><b id="pz-k-membri">0</b> membri</span><span><b id="pz-k-richieste">0</b> richieste in attesa</span><span><b id="pz-k-feedback">0</b> messaggi da gestire</span><span id="pz-scrittura"></span><span><a id="pz-link" href="#" target="_blank" rel="noopener">Apri la Piazza</a></span></div>
             <div class="pz-tabs" id="pz-tabs">
               <button data-p="richieste" class="on">Richieste <span class="n" id="n-richieste">0</span></button>
               <button data-p="post">Bacheca</button><button data-p="risorsa">Libreria</button><button data-p="vetrina">Vetrina</button><button data-p="notiziario">Notiziario</button>
@@ -333,7 +333,7 @@
         PZ = r; document.getElementById('pz-off').hidden = true; document.getElementById('pz-on').hidden = false;
         document.getElementById('pz-sub').textContent = 'Indirizzo da dare ai soci: ' + r.url;
         document.getElementById('pz-link').href = r.url;
-        document.getElementById('pz-membri').textContent = r.membri; document.getElementById('pz-richieste').textContent = r.richieste.length; document.getElementById('pz-feedback').textContent = r.feedback.length;
+        document.getElementById('pz-k-membri').textContent = r.membri; document.getElementById('pz-k-richieste').textContent = r.richieste.length; document.getElementById('pz-k-feedback').textContent = r.feedback.length;
         document.getElementById('n-richieste').textContent = r.richieste.length; document.getElementById('n-feedback').textContent = r.feedback.length;
         document.getElementById('pz-scrittura').innerHTML = r.scrittura ? 'Fase 2: <strong>i soci possono pubblicare</strong> (Config "Piazza scrittura soci" = Sì)' : 'Fase 1: scrive solo la Commissione (Config "Piazza scrittura soci" = No)';
         pzDisegna();
