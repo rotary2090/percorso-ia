@@ -158,6 +158,7 @@
   .menu-five .tile { padding: 24px 20px 22px; }
   .menu-five .tile h3 { font-size: 1.05rem; }
   .menu-five .tile p { font-size: 14px; }
+  [data-go] { cursor: pointer; }
   .crumb { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; text-decoration: none; color: var(--royal); margin-bottom: 18px; }
   .crumb:hover { text-decoration: underline; }
   .on-dark .crumb { color: var(--gold); }
@@ -491,7 +492,7 @@
     </div>
   </div>
   <div class="legal">
-    <div class="wrap">Rotary e il marchio Rotary sono marchi registrati di Rotary International, usati con autorizzazione dal Distretto 2090. Gli indirizzi email raccolti con il registro delle presenze e i dati dei moduli sono trattati esclusivamente per l'organizzazione del percorso.</div>
+    <div class="wrap">Rotary e il marchio Rotary sono marchi registrati di Rotary International, usati con autorizzazione dal Distretto 2090. Gli indirizzi email raccolti con il registro delle presenze e i dati dei moduli sono trattati esclusivamente per l'organizzazione del percorso. <span id="ver" style="opacity:.5">v3.0.2</span></div>
   </div>
 </footer>
 
@@ -594,15 +595,25 @@
     window.addEventListener('hashchange', function () { mostra(); });
     /* I clic sui link interni (#scheda) cambiano scheda direttamente: dentro il riquadro di Google Sites la
        navigazione per ancora è bloccata dalla sandbox, quindi non ci si affida al cambio di indirizzo. */
-    document.addEventListener('click', function (e) {
-      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
-      if (!a) return;
-      var id = a.getAttribute('href').slice(1);
-      if (id !== 'top' && id !== '' && VISTE.indexOf(id) < 0) return;
-      e.preventDefault();
+    function vaiA(id) {
       try { if (location.hash !== '#' + id) history.pushState(null, '', '#' + id); } catch (err) {}
       mostra(id);
+    }
+    /* I link interni perdono l'href e diventano pulsanti (data-go): così nessun contenitore (Google Sites aggiunge
+       un target ai link) può intercettarli o bloccarli; senza script resterebbero normali ancore. */
+    document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+      var id = a.getAttribute('href').slice(1);
+      if (id !== 'top' && VISTE.indexOf(id) < 0) return;
+      a.setAttribute('data-go', id); a.removeAttribute('href'); a.setAttribute('role', 'link'); a.tabIndex = 0;
     });
+    function suClick(e) {
+      var a = e.target && e.target.closest ? e.target.closest('[data-go]') : null;
+      if (!a) return;
+      e.preventDefault(); e.stopPropagation();
+      vaiA(a.getAttribute('data-go'));
+    }
+    window.addEventListener('click', suClick, true);
+    window.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target && e.target.getAttribute && e.target.getAttribute('data-go')) { e.preventDefault(); vaiA(e.target.getAttribute('data-go')); } }, true);
     window.addEventListener('popstate', function () { mostra(); });
     mostra();
 
