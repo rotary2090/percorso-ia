@@ -156,15 +156,15 @@
           <p class="note">Questi collegamenti aprono i file di Google: servono l'account del Distretto, oppure che il file sia stato condiviso con il tuo account (consigliato per il foglio e la cartella Drive). Per i pulsanti qui sopra, invece, non serve nulla.</p>
         </div>
         <div class="card" id="card-piazza">
-          <span class="eyebrow">Piazza</span>
-          <h2>Lo spazio dei soci: accessi, contenuti, notiziario, messaggi</h2>
+          <span class="eyebrow">mAIplace · Meet. Share. Grow.</span>
+          <h2>mAIplace, lo spazio dei soci: accessi, contenuti, notiziario, messaggi</h2>
           <p class="sub" id="pz-sub">Lettura in corso…</p>
           <div id="pz-off" hidden>
-            <p class="note">La Piazza non è ancora attivata nel foglio di regia. Il setup crea le schede (Membri, Richieste, Post, Risorse, Vetrina, Notiziario, Feedback, Interessi), due righe in Config e i contenuti iniziali: benvenuto, un post per incontro, libreria, vetrina, notiziario n. 1. Si esegue una volta sola.</p>
-            <div class="btn-row" style="margin-top:10px"><button class="btn-sm warn" data-az="piazzaSetup" data-conferma="Attivo la Piazza: creo le schede e i contenuti iniziali. Continuare?">Attiva la Piazza (setup)</button></div>
+            <p class="note">mAIplace non è ancora attivata nel foglio di regia. Il setup crea le schede (Membri, Richieste, Post, Risorse, Vetrina, Notiziario, Feedback, Interessi), due righe in Config e i contenuti iniziali: benvenuto, un post per incontro, libreria, vetrina, notiziario n. 1. Si esegue una volta sola.</p>
+            <div class="btn-row" style="margin-top:10px"><button class="btn-sm warn" data-az="piazzaSetup" data-conferma="Attivo mAIplace: creo le schede e i contenuti iniziali. Continuare?">Attiva mAIplace (setup)</button></div>
           </div>
           <div id="pz-on" hidden>
-            <div class="pz-kpi"><span><b id="pz-k-membri">0</b> membri</span><span><b id="pz-k-richieste">0</b> richieste in attesa</span><span><b id="pz-k-feedback">0</b> messaggi da gestire</span><span id="pz-scrittura"></span><span><a id="pz-link" href="#" target="_blank" rel="noopener">Apri la Piazza</a></span></div>
+            <div class="pz-kpi"><span><b id="pz-k-membri">0</b> membri</span><span><b id="pz-k-richieste">0</b> richieste in attesa</span><span><b id="pz-k-feedback">0</b> messaggi da gestire</span><span id="pz-scrittura"></span><span><a id="pz-link" href="#" target="_blank" rel="noopener">Apri mAIplace</a></span></div>
             <div class="pz-tabs" id="pz-tabs">
               <button data-p="richieste" class="on">Richieste <span class="n" id="n-richieste">0</span></button>
               <button data-p="post">Bacheca</button><button data-p="risorsa">Libreria</button><button data-p="vetrina">Vetrina</button><button data-p="notiziario">Notiziario</button>
@@ -178,7 +178,7 @@
             <div class="pz-pane" id="pz-feedback"></div>
             <div class="pz-pane" id="pz-membri"></div>
             <div class="out" id="pz-out" style="margin-top:14px">Pronto.</div>
-            <p class="note">Tutto quello che pubblichi qui compare subito nella Piazza; "Nascondi" lo toglie dalla vista dei soci senza cancellarlo dal foglio. Il notiziario parte via email a tutti i membri (massimo 90 al giorno: se sono di più, ripremere "Invia" il giorno dopo).</p>
+            <p class="note">Tutto quello che pubblichi qui compare subito in mAIplace; "Nascondi" lo toglie dalla vista dei soci senza cancellarlo dal foglio. Il notiziario parte via email a tutti i membri (massimo 90 al giorno: se sono di più, ripremere "Invia" il giorno dopo).</p>
           </div>
         </div>
         <div class="card">
@@ -348,7 +348,7 @@
       var btns = '<button class="btn-sm" data-pz="modifica" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '">Modifica</button>' +
         '<button class="btn-sm" data-pz="visibile" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '" data-v="' + (it.visibile ? '0' : '1') + '">' + (it.visibile ? 'Nascondi' : 'Mostra') + '</button>' +
         (tipo === 'post' ? '<button class="btn-sm" data-pz="fissa" data-id="' + esc(it.id) + '" data-v="' + (it.fissato ? '0' : '1') + '">' + (it.fissato ? 'Togli evidenza' : 'In evidenza') + '</button>' : '') +
-        (tipo === 'notiziario' ? '<button class="btn-sm warn" data-pz="invia" data-id="' + esc(it.id) + '" data-conferma="Invio questo numero via email a tutti i membri della Piazza. Continuare?">Invia ai membri</button>' : '');
+        (tipo === 'notiziario' ? '<button class="btn-sm warn" data-pz="invia" data-id="' + esc(it.id) + '" data-conferma="Invio questo numero via email a tutti i membri di mAIplace. Continuare?">Invia ai membri</button>' : '');
       return '<div class="pz-item' + (it.visibile ? '' : ' off') + '"><div><div class="ti">' + esc(it.titolo) + '</div><div class="meta">' + meta.filter(Boolean).map(esc).join(' · ') + '</div><div class="tx">' + esc(it.testo || it.descrizione || '') + '</div></div><div class="btn-row">' + btns + '</div></div>';
     }
     function pzFormHtml(tipo, it) {
@@ -362,7 +362,7 @@
         '<div><label>Titolo</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Descrizione</label><textarea id="pzf-descrizione" style="min-height:70px">' + v('descrizione') + '</textarea></div><div><label>Link (Drive, sito…)</label><input id="pzf-link" value="' + v('link') + '"></div>';
       if (tipo === 'vetrina') h += '<div class="pz-row"><div><label>Club</label><input id="pzf-club" value="' + v('club') + '"></div><div><label>Stato</label><select id="pzf-stato">' + ['Idea', 'In corso', 'Realizzato'].map(function (c) { return '<option' + (it.stato === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div></div>' +
         '<div><label>Titolo del progetto</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Descrizione</label><textarea id="pzf-descrizione">' + v('descrizione') + '</textarea></div><div class="pz-row"><div><label>Referente (nome)</label><input id="pzf-referente" value="' + v('referente') + '"></div><div><label>Link (facoltativo)</label><input id="pzf-link" value="' + v('link') + '"></div></div>';
-      if (tipo === 'notiziario') h += '<div><label>Titolo (es. In piazza · n. 2 — Dopo il primo incontro)</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Testo (paragrafi separati da una riga vuota)</label><textarea id="pzf-testo" style="min-height:160px">' + v('testo') + '</textarea></div>';
+      if (tipo === 'notiziario') h += '<div><label>Titolo (es. mAIplace · n. 2 — Dopo il primo incontro)</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Testo (paragrafi separati da una riga vuota)</label><textarea id="pzf-testo" style="min-height:160px">' + v('testo') + '</textarea></div>';
       h += '<div class="btn-row"><button class="btn-sm" data-pz="salva" data-tipo="' + tipo + '">' + (it.id ? 'Salva le modifiche' : 'Pubblica') + '</button>' + (it.id ? '<button class="btn-sm" data-pz="annulla" data-tipo="' + tipo + '">Annulla</button>' : '') + '</div></div>';
       return h;
     }
@@ -375,7 +375,7 @@
         h = PZ.richieste.length ? PZ.richieste.map(function (r) { return '<div class="pz-item"><div><div class="ti">' + esc(r.nome) + ' · ' + esc(r.club || 'club non indicato') + '</div><div class="meta">' + esc(r.email) + ' · ' + pzData(r.data) + '</div><div class="tx">' + esc(r.messaggio) + '</div></div><div class="btn-row"><button class="btn-sm" data-pz="approva" data-email="' + esc(r.email) + '">Approva e manda il link</button><button class="btn-sm warn" data-pz="rifiuta" data-email="' + esc(r.email) + '">Rifiuta</button></div></div>'; }).join('') : '<p class="note">Nessuna richiesta in attesa.</p>';
         h += '<div class="pz-form"><strong>Invita direttamente una persona</strong><div class="pz-row"><div><label>Email</label><input id="pzi-email"></div><div><label>Nome (facoltativo)</label><input id="pzi-nome"></div></div><div><label>Club (facoltativo)</label><input id="pzi-club"></div><div class="btn-row"><button class="btn-sm" data-pz="invita">Manda il link personale</button></div></div>';
       } else if (pzTab === 'feedback') {
-        h = PZ.feedback.length ? PZ.feedback.map(function (f) { return '<div class="pz-item"><div><div class="ti">' + esc(f.nome || f.email) + ' · ' + esc(f.club) + '</div><div class="meta">' + esc(f.email) + ' · ' + pzData(f.data) + (f.riferimento ? ' · a proposito di: ' + esc(f.riferimento) : '') + '</div><div class="tx" style="max-height:none">' + esc(f.testo) + '</div></div><div class="btn-row"><a class="btn-sm" href="mailto:' + esc(f.email) + '?subject=' + encodeURIComponent('Piazza — risposta al tuo messaggio') + '">Rispondi</a><button class="btn-sm" data-pz="gestito" data-riga="' + f.riga + '">Gestito</button></div></div>'; }).join('') : '<p class="note">Nessun messaggio da gestire. (Arrivano anche via email ad ai.rotary2090.)</p>';
+        h = PZ.feedback.length ? PZ.feedback.map(function (f) { return '<div class="pz-item"><div><div class="ti">' + esc(f.nome || f.email) + ' · ' + esc(f.club) + '</div><div class="meta">' + esc(f.email) + ' · ' + pzData(f.data) + (f.riferimento ? ' · a proposito di: ' + esc(f.riferimento) : '') + '</div><div class="tx" style="max-height:none">' + esc(f.testo) + '</div></div><div class="btn-row"><a class="btn-sm" href="mailto:' + esc(f.email) + '?subject=' + encodeURIComponent('mAIplace — risposta al tuo messaggio') + '">Rispondi</a><button class="btn-sm" data-pz="gestito" data-riga="' + f.riga + '">Gestito</button></div></div>'; }).join('') : '<p class="note">Nessun messaggio da gestire. (Arrivano anche via email ad ai.rotary2090.)</p>';
       } else if (pzTab === 'membri') {
         h = '<p class="note">' + PZ.membriElenco.length + ' membri in tutto. "Sospendi" revoca l\'accesso senza cancellare la riga.</p>' + PZ.membriElenco.map(function (m) { var sosp = String(m.stato || '').toLowerCase() === 'sospeso'; return '<div class="pz-item' + (sosp ? ' off' : '') + '"><div><div class="ti">' + esc(m.nome || m.email) + (m.club ? ' · ' + esc(m.club) : '') + '</div><div class="meta">' + esc(m.email) + ' · ' + esc(m.origine || '') + (m.ultimo ? ' · ultimo accesso ' + pzData(m.ultimo) : ' · mai entrato') + '</div></div><div class="btn-row"><button class="btn-sm" data-pz="sospendi" data-email="' + esc(m.email) + '" data-v="' + (sosp ? '1' : '0') + '">' + (sosp ? 'Riattiva' : 'Sospendi') + '</button></div></div>'; }).join('');
       } else {
