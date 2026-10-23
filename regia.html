@@ -84,6 +84,25 @@
   .wa textarea { width: 100%; min-height: 120px; font: inherit; font-size: 13.5px; padding: 10px 12px; border: 1.5px solid var(--line); border-radius: 6px; resize: vertical; }
   .chan { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 14px; margin-top: 10px; }
   .chan span { color: var(--fg-muted); }
+  /* ---- sezione Piazza ---- */
+  .pz-tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .pz-tabs button { border: 1.5px solid var(--line); background: #fff; color: var(--fg-muted); border-radius: 999px; padding: 7px 13px; font: inherit; font-size: 13.5px; font-weight: 700; cursor: pointer; }
+  .pz-tabs button.on { background: var(--royal); border-color: var(--royal); color: #fff; }
+  .pz-tabs button .n { display: inline-block; min-width: 18px; padding: 0 5px; border-radius: 999px; background: var(--gold); color: var(--royal-ink); font-size: 11.5px; margin-left: 4px; }
+  .pz-pane { display: none; margin-top: 14px; } .pz-pane.on { display: block; }
+  .pz-item { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; padding: 10px 0; border-top: 1px solid var(--line); font-size: 14px; align-items: start; }
+  .pz-item:first-child { border-top: 0; }
+  .pz-item .ti { font-weight: 700; } .pz-item .meta { font-size: 12.5px; color: var(--fg-muted); margin-top: 2px; }
+  .pz-item .tx { font-size: 13.5px; margin-top: 4px; white-space: pre-line; max-height: 4.5em; overflow: hidden; color: var(--fg); }
+  .pz-item.off .ti { color: var(--fg-muted); text-decoration: line-through; }
+  .pz-item .btn-row { justify-content: flex-end; }
+  .pz-form { display: grid; gap: 10px; margin-top: 14px; padding: 16px; background: #F6F8FB; border: 1px solid var(--line); border-radius: 10px; }
+  .pz-form label { font-size: 13px; font-weight: 700; color: var(--royal-deep); display: block; margin-bottom: 3px; }
+  .pz-form input, .pz-form select, .pz-form textarea { width: 100%; font: inherit; font-size: 14px; padding: 9px 11px; border: 1.5px solid var(--line); border-radius: 6px; background: #fff; }
+  .pz-form textarea { min-height: 110px; resize: vertical; }
+  .pz-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } @media (max-width: 600px) { .pz-row { grid-template-columns: 1fr; } }
+  .pz-form .chk { display: flex; align-items: center; gap: 8px; font-size: 14px; } .pz-form .chk input { width: auto; }
+  .pz-kpi { display: flex; gap: 10px 22px; flex-wrap: wrap; font-size: 14px; margin-top: 10px; } .pz-kpi b { font-size: 20px; color: var(--royal); margin-right: 4px; }
   footer { background: var(--royal-ink); color: rgba(255,255,255,.7); font-size: 13px; }
   footer .wrap { padding-block: 16px; }
   footer a { color: #fff; }
@@ -135,6 +154,32 @@
           <h2>Foglio, Drive, moduli, script</h2>
           <ul class="links" id="backend"></ul>
           <p class="note">Questi collegamenti aprono i file di Google: servono l'account del Distretto, oppure che il file sia stato condiviso con il tuo account (consigliato per il foglio e la cartella Drive). Per i pulsanti qui sopra, invece, non serve nulla.</p>
+        </div>
+        <div class="card" id="card-piazza">
+          <span class="eyebrow">Piazza</span>
+          <h2>Lo spazio dei soci: accessi, contenuti, notiziario, messaggi</h2>
+          <p class="sub" id="pz-sub">Lettura in corso…</p>
+          <div id="pz-off" hidden>
+            <p class="note">La Piazza non è ancora attivata nel foglio di regia. Il setup crea le schede (Membri, Richieste, Post, Risorse, Vetrina, Notiziario, Feedback, Interessi), due righe in Config e i contenuti iniziali: benvenuto, un post per incontro, libreria, vetrina, notiziario n. 1. Si esegue una volta sola.</p>
+            <div class="btn-row" style="margin-top:10px"><button class="btn-sm warn" data-az="piazzaSetup" data-conferma="Attivo la Piazza: creo le schede e i contenuti iniziali. Continuare?">Attiva la Piazza (setup)</button></div>
+          </div>
+          <div id="pz-on" hidden>
+            <div class="pz-kpi"><span><b id="pz-membri">0</b> membri</span><span><b id="pz-richieste">0</b> richieste in attesa</span><span><b id="pz-feedback">0</b> messaggi da gestire</span><span id="pz-scrittura"></span><span><a id="pz-link" href="#" target="_blank" rel="noopener">Apri la Piazza</a></span></div>
+            <div class="pz-tabs" id="pz-tabs">
+              <button data-p="richieste" class="on">Richieste <span class="n" id="n-richieste">0</span></button>
+              <button data-p="post">Bacheca</button><button data-p="risorsa">Libreria</button><button data-p="vetrina">Vetrina</button><button data-p="notiziario">Notiziario</button>
+              <button data-p="feedback">Messaggi <span class="n" id="n-feedback">0</span></button><button data-p="membri">Membri</button>
+            </div>
+            <div class="pz-pane" id="pz-richieste"></div>
+            <div class="pz-pane" id="pz-post"></div>
+            <div class="pz-pane" id="pz-risorsa"></div>
+            <div class="pz-pane" id="pz-vetrina"></div>
+            <div class="pz-pane" id="pz-notiziario"></div>
+            <div class="pz-pane" id="pz-feedback"></div>
+            <div class="pz-pane" id="pz-membri"></div>
+            <div class="out" id="pz-out" style="margin-top:14px">Pronto.</div>
+            <p class="note">Tutto quello che pubblichi qui compare subito nella Piazza; "Nascondi" lo toglie dalla vista dei soci senza cancellarlo dal foglio. Il notiziario parte via email a tutti i membri (massimo 90 al giorno: se sono di più, ripremere "Invia" il giorno dopo).</p>
+          </div>
         </div>
         <div class="card">
           <span class="eyebrow">Promemoria</span>
@@ -268,8 +313,104 @@
       mostra('Eseguo "' + b.textContent.replace('Confermo: ', '') + '"' + (b.dataset.n ? ' (incontro ' + b.dataset.n + ')' : '') + '… può volerci qualche minuto.');
       chiama(b.dataset.az, b.dataset.n).then(function (r) {
         if (r.ok) mostra(r.messaggio || 'Fatto.'); else mostra('Errore: ' + (r.errore || 'sconosciuto'), true);
+        if (b.dataset.az === 'piazzaSetup' && r.ok) pzLeggi();
         var c = document.getElementById('conferma-' + b.dataset.az); if (c) c.remove();
       }).catch(function (e) { mostra('Errore di collegamento: ' + e.message, true); })
+        .then(function () { tutti.forEach(function (x) { x.disabled = false; }); });
+    });
+
+    /* ================= Piazza ================= */
+    var PZ = null, pzTab = 'richieste', pzEdit = {};
+    function pzOut(t, err) { var o = document.getElementById('pz-out'); o.textContent = t; o.className = 'out' + (err ? ' err' : ''); }
+    function pzData(iso) { if (!iso) return ''; var d = new Date(iso); return isNaN(d) ? String(iso) : d.toLocaleDateString('it-IT'); }
+    function pzLeggi() {
+      chiama('piazzaStato').then(function (r) {
+        if (!r.ok) {
+          if (/non è ancora attivata/.test(r.errore || '')) { document.getElementById('pz-sub').textContent = 'Non ancora attivata.'; document.getElementById('pz-off').hidden = false; document.getElementById('pz-on').hidden = true; }
+          else document.getElementById('pz-sub').textContent = 'Errore: ' + r.errore;
+          return;
+        }
+        PZ = r; document.getElementById('pz-off').hidden = true; document.getElementById('pz-on').hidden = false;
+        document.getElementById('pz-sub').textContent = 'Indirizzo da dare ai soci: ' + r.url;
+        document.getElementById('pz-link').href = r.url;
+        document.getElementById('pz-membri').textContent = r.membri; document.getElementById('pz-richieste').textContent = r.richieste.length; document.getElementById('pz-feedback').textContent = r.feedback.length;
+        document.getElementById('n-richieste').textContent = r.richieste.length; document.getElementById('n-feedback').textContent = r.feedback.length;
+        document.getElementById('pz-scrittura').innerHTML = r.scrittura ? 'Fase 2: <strong>i soci possono pubblicare</strong> (Config "Piazza scrittura soci" = Sì)' : 'Fase 1: scrive solo la Commissione (Config "Piazza scrittura soci" = No)';
+        pzDisegna();
+      }).catch(function (e) { document.getElementById('pz-sub').textContent = 'Back end non raggiungibile: ' + e.message; });
+    }
+    function pzItemHtml(tipo, it) {
+      var meta = [];
+      if (tipo === 'post') meta = [it.colonna, it.autore, pzData(it.data), (it.fissato ? '📌 in evidenza' : ''), (it.interessa ? '★ ' + it.interessa : '')];
+      if (tipo === 'risorsa') meta = [it.tema, it.tipo, pzData(it.data)];
+      if (tipo === 'vetrina') meta = [it.club, it.stato, it.referente, pzData(it.data)];
+      if (tipo === 'notiziario') meta = [pzData(it.data), it.inviatoA ? 'inviato a ' + it.inviatoA + (it.dataInvio ? ' il ' + pzData(it.dataInvio) : '') : 'non ancora inviato'];
+      var btns = '<button class="btn-sm" data-pz="modifica" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '">Modifica</button>' +
+        '<button class="btn-sm" data-pz="visibile" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '" data-v="' + (it.visibile ? '0' : '1') + '">' + (it.visibile ? 'Nascondi' : 'Mostra') + '</button>' +
+        (tipo === 'post' ? '<button class="btn-sm" data-pz="fissa" data-id="' + esc(it.id) + '" data-v="' + (it.fissato ? '0' : '1') + '">' + (it.fissato ? 'Togli evidenza' : 'In evidenza') + '</button>' : '') +
+        (tipo === 'notiziario' ? '<button class="btn-sm warn" data-pz="invia" data-id="' + esc(it.id) + '" data-conferma="Invio questo numero via email a tutti i membri della Piazza. Continuare?">Invia ai membri</button>' : '');
+      return '<div class="pz-item' + (it.visibile ? '' : ' off') + '"><div><div class="ti">' + esc(it.titolo) + '</div><div class="meta">' + meta.filter(Boolean).map(esc).join(' · ') + '</div><div class="tx">' + esc(it.testo || it.descrizione || '') + '</div></div><div class="btn-row">' + btns + '</div></div>';
+    }
+    function pzFormHtml(tipo, it) {
+      it = it || {}; var v = function (k) { return esc(it[k] || ''); };
+      var h = '<div class="pz-form" id="pz-f-' + tipo + '"><strong>' + (it.id ? 'Modifica' : 'Nuovo') + ' — ' + { post: 'post in bacheca', risorsa: 'risorsa della libreria', vetrina: 'progetto in vetrina', notiziario: 'numero del notiziario' }[tipo] + '</strong><input type="hidden" id="pzf-id" value="' + v('id') + '">';
+      if (tipo === 'post') h += '<div class="pz-row"><div><label>Colonna</label><select id="pzf-colonna">' + PZ.colonne.map(function (c) { return '<option' + (it.colonna === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select></div><div><label>Etichette (virgola)</label><input id="pzf-etichette" value="' + v('etichette') + '"></div></div>' +
+        '<div><label>Titolo</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Testo</label><textarea id="pzf-testo">' + v('testo') + '</textarea></div><div><label>Link (facoltativo)</label><input id="pzf-link" value="' + v('link') + '"></div>' +
+        '<div class="pz-row"><div><label>Firma</label><input id="pzf-autore" value="' + (it.autore ? v('autore') : 'Commissione Innovazione Digitale') + '"></div><div><label>Club / ente</label><input id="pzf-club" value="' + (it.club ? v('club') : 'Distretto 2090') + '"></div></div>' +
+        '<label class="chk"><input type="checkbox" id="pzf-fissato"' + (it.fissato ? ' checked' : '') + '> In evidenza (in cima alla colonna)</label>';
+      if (tipo === 'risorsa') h += '<div class="pz-row"><div><label>Tema</label><select id="pzf-tema">' + PZ.temi.map(function (c) { return '<option' + (it.tema === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('') + '</select></div><div><label>Tipo</label><select id="pzf-tipoRisorsa">' + ['Registrazione', 'Slide', 'Guida', 'Prompt', 'Strumento', 'Link', 'Video'].map(function (c) { return '<option' + (it.tipo === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div></div>' +
+        '<div><label>Titolo</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Descrizione</label><textarea id="pzf-descrizione" style="min-height:70px">' + v('descrizione') + '</textarea></div><div><label>Link (Drive, sito…)</label><input id="pzf-link" value="' + v('link') + '"></div>';
+      if (tipo === 'vetrina') h += '<div class="pz-row"><div><label>Club</label><input id="pzf-club" value="' + v('club') + '"></div><div><label>Stato</label><select id="pzf-stato">' + ['Idea', 'In corso', 'Realizzato'].map(function (c) { return '<option' + (it.stato === c ? ' selected' : '') + '>' + c + '</option>'; }).join('') + '</select></div></div>' +
+        '<div><label>Titolo del progetto</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Descrizione</label><textarea id="pzf-descrizione">' + v('descrizione') + '</textarea></div><div class="pz-row"><div><label>Referente (nome)</label><input id="pzf-referente" value="' + v('referente') + '"></div><div><label>Link (facoltativo)</label><input id="pzf-link" value="' + v('link') + '"></div></div>';
+      if (tipo === 'notiziario') h += '<div><label>Titolo (es. In piazza · n. 2 — Dopo il primo incontro)</label><input id="pzf-titolo" value="' + v('titolo') + '"></div><div><label>Testo (paragrafi separati da una riga vuota)</label><textarea id="pzf-testo" style="min-height:160px">' + v('testo') + '</textarea></div>';
+      h += '<div class="btn-row"><button class="btn-sm" data-pz="salva" data-tipo="' + tipo + '">' + (it.id ? 'Salva le modifiche' : 'Pubblica') + '</button>' + (it.id ? '<button class="btn-sm" data-pz="annulla" data-tipo="' + tipo + '">Annulla</button>' : '') + '</div></div>';
+      return h;
+    }
+    function pzDisegna() {
+      if (!PZ) return;
+      document.querySelectorAll('#pz-tabs button').forEach(function (b) { b.classList.toggle('on', b.dataset.p === pzTab); });
+      document.querySelectorAll('.pz-pane').forEach(function (p) { p.classList.toggle('on', p.id === 'pz-' + pzTab); });
+      var pane = document.getElementById('pz-' + pzTab), h = '';
+      if (pzTab === 'richieste') {
+        h = PZ.richieste.length ? PZ.richieste.map(function (r) { return '<div class="pz-item"><div><div class="ti">' + esc(r.nome) + ' · ' + esc(r.club || 'club non indicato') + '</div><div class="meta">' + esc(r.email) + ' · ' + pzData(r.data) + '</div><div class="tx">' + esc(r.messaggio) + '</div></div><div class="btn-row"><button class="btn-sm" data-pz="approva" data-email="' + esc(r.email) + '">Approva e manda il link</button><button class="btn-sm warn" data-pz="rifiuta" data-email="' + esc(r.email) + '">Rifiuta</button></div></div>'; }).join('') : '<p class="note">Nessuna richiesta in attesa.</p>';
+        h += '<div class="pz-form"><strong>Invita direttamente una persona</strong><div class="pz-row"><div><label>Email</label><input id="pzi-email"></div><div><label>Nome (facoltativo)</label><input id="pzi-nome"></div></div><div><label>Club (facoltativo)</label><input id="pzi-club"></div><div class="btn-row"><button class="btn-sm" data-pz="invita">Manda il link personale</button></div></div>';
+      } else if (pzTab === 'feedback') {
+        h = PZ.feedback.length ? PZ.feedback.map(function (f) { return '<div class="pz-item"><div><div class="ti">' + esc(f.nome || f.email) + ' · ' + esc(f.club) + '</div><div class="meta">' + esc(f.email) + ' · ' + pzData(f.data) + (f.riferimento ? ' · a proposito di: ' + esc(f.riferimento) : '') + '</div><div class="tx" style="max-height:none">' + esc(f.testo) + '</div></div><div class="btn-row"><a class="btn-sm" href="mailto:' + esc(f.email) + '?subject=' + encodeURIComponent('Piazza — risposta al tuo messaggio') + '">Rispondi</a><button class="btn-sm" data-pz="gestito" data-riga="' + f.riga + '">Gestito</button></div></div>'; }).join('') : '<p class="note">Nessun messaggio da gestire. (Arrivano anche via email ad ai.rotary2090.)</p>';
+      } else if (pzTab === 'membri') {
+        h = '<p class="note">' + PZ.membriElenco.length + ' membri in tutto. "Sospendi" revoca l\'accesso senza cancellare la riga.</p>' + PZ.membriElenco.map(function (m) { var sosp = String(m.stato || '').toLowerCase() === 'sospeso'; return '<div class="pz-item' + (sosp ? ' off' : '') + '"><div><div class="ti">' + esc(m.nome || m.email) + (m.club ? ' · ' + esc(m.club) : '') + '</div><div class="meta">' + esc(m.email) + ' · ' + esc(m.origine || '') + (m.ultimo ? ' · ultimo accesso ' + pzData(m.ultimo) : ' · mai entrato') + '</div></div><div class="btn-row"><button class="btn-sm" data-pz="sospendi" data-email="' + esc(m.email) + '" data-v="' + (sosp ? '1' : '0') + '">' + (sosp ? 'Riattiva' : 'Sospendi') + '</button></div></div>'; }).join('');
+      } else {
+        var lista = { post: PZ.post, risorsa: PZ.risorse, vetrina: PZ.vetrina, notiziario: PZ.notiziario }[pzTab].slice().sort(function (a, b) { return new Date(b.data) - new Date(a.data); });
+        h = (pzEdit[pzTab] ? pzFormHtml(pzTab, pzEdit[pzTab]) : pzFormHtml(pzTab)) + '<div style="margin-top:12px">' + (lista.length ? lista.map(function (it) { return pzItemHtml(pzTab, it); }).join('') : '<p class="note">Ancora niente qui.</p>') + '</div>';
+      }
+      pane.innerHTML = h;
+    }
+    document.getElementById('pz-tabs').addEventListener('click', function (ev) { var b = ev.target.closest('button[data-p]'); if (!b) return; pzTab = b.dataset.p; pzDisegna(); });
+    document.getElementById('card-piazza').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-pz]'); if (!b) return;
+      var az = b.dataset.pz, tipo = b.dataset.tipo;
+      if (az === 'modifica') { pzEdit[tipo] = ({ post: PZ.post, risorsa: PZ.risorse, vetrina: PZ.vetrina, notiziario: PZ.notiziario }[tipo]).filter(function (x) { return x.id === b.dataset.id; })[0]; pzDisegna(); document.getElementById('pz-f-' + tipo).scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      if (az === 'annulla') { delete pzEdit[tipo]; pzDisegna(); return; }
+      if (b.dataset.conferma && !b.dataset.confermato) { b.dataset.confermato = '1'; b.textContent = 'Confermo: ' + b.textContent; pzOut(b.dataset.conferma); return; }
+      var corpo = null, msg = '';
+      if (az === 'salva') {
+        var g = function (id) { var e = document.getElementById('pzf-' + id); return e ? (e.type === 'checkbox' ? e.checked : e.value) : undefined; };
+        var item = { id: g('id'), titolo: g('titolo'), testo: g('testo'), link: g('link'), etichette: g('etichette'), colonna: g('colonna'), autore: g('autore'), club: g('club'), fissato: g('fissato'), tema: g('tema'), tipoRisorsa: g('tipoRisorsa'), descrizione: g('descrizione'), stato: g('stato'), referente: g('referente') };
+        if (!item.titolo) { pzOut('Serve un titolo.', true); return; }
+        corpo = { tipo: tipo, item: item }; msg = 'Salvo…'; delete pzEdit[tipo]; az = 'piazzaSalva';
+      }
+      else if (az === 'visibile') { corpo = { tipo: tipo, id: b.dataset.id, visibile: b.dataset.v === '1' }; az = 'piazzaVisibile'; }
+      else if (az === 'fissa') { corpo = { id: b.dataset.id, fissato: b.dataset.v === '1' }; az = 'piazzaFissa'; }
+      else if (az === 'invia') { corpo = { id: b.dataset.id }; az = 'piazzaInvia'; msg = 'Invio del notiziario in corso…'; }
+      else if (az === 'approva') { corpo = { email: b.dataset.email }; az = 'piazzaApprova'; }
+      else if (az === 'rifiuta') { corpo = { email: b.dataset.email }; az = 'piazzaRifiuta'; }
+      else if (az === 'gestito') { corpo = { riga: b.dataset.riga }; az = 'piazzaFeedbackGestito'; }
+      else if (az === 'sospendi') { corpo = { email: b.dataset.email, riattiva: b.dataset.v === '1' }; az = 'piazzaSospendi'; }
+      else if (az === 'invita') { corpo = { email: document.getElementById('pzi-email').value.trim(), nome: document.getElementById('pzi-nome').value.trim(), club: document.getElementById('pzi-club').value.trim() }; az = 'piazzaInvita'; if (!corpo.email) { pzOut('Scrivi l\'email.', true); return; } }
+      else return;
+      var tutti = document.querySelectorAll('#card-piazza button'); tutti.forEach(function (x) { x.disabled = true; });
+      pzOut(msg || 'Eseguo…');
+      chiama(az, 0, corpo).then(function (r) { if (r.ok) { pzOut(r.messaggio || 'Fatto.'); pzLeggi(); } else pzOut('Errore: ' + (r.errore || 'sconosciuto'), true); })
+        .catch(function (e) { pzOut('Errore di collegamento: ' + e.message, true); })
         .then(function () { tutti.forEach(function (x) { x.disabled = false; }); });
     });
 
@@ -289,7 +430,7 @@
         document.getElementById('stato-sub').textContent = 'Dati dell\'ultima apertura: aggiornamento dal back end in corso…';
       }
       leggiStato().then(function (st) {
-        if (st.ok) { disegna(st); try { localStorage.setItem('ia2090-stato', JSON.stringify(st)); } catch (e) {} }
+        if (st.ok) { disegna(st); try { localStorage.setItem('ia2090-stato', JSON.stringify(st)); } catch (e) {} pzLeggi(); }
         else if (!vecchio) fallito('Il back end rifiuta la password: ' + (st.errore || '') + '.');
         else document.getElementById('stato-sub').textContent = 'Aggiornamento non riuscito: ' + (st.errore || '') + ' (dati dell\'ultima apertura).';
       }).catch(function (e) {
