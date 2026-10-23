@@ -575,9 +575,10 @@
       r.innerHTML = '<a class="btn ' + (dark ? 'btn-ghost' : 'btn-outline') + '" href="#top">&larr; Torna alla home</a>';
       if (w) w.appendChild(r);
     });
-    var primaVolta = true;
-    function mostra() {
-      var id = (location.hash || '').replace('#', '');
+    var primaVolta = true, corrente = '';
+    function mostra(forzato) {
+      var id = typeof forzato === 'string' ? forzato : (location.hash || '').replace('#', '');
+      corrente = id;
       var isVista = VISTE.indexOf(id) >= 0;
       home.forEach(function (el) { el.hidden = isVista; });
       viste.forEach(function (sec) { sec.hidden = !(isVista && sec.id === id); });
@@ -590,7 +591,19 @@
       }
       primaVolta = false;
     }
-    window.addEventListener('hashchange', mostra);
+    window.addEventListener('hashchange', function () { mostra(); });
+    /* I clic sui link interni (#scheda) cambiano scheda direttamente: dentro il riquadro di Google Sites la
+       navigazione per ancora è bloccata dalla sandbox, quindi non ci si affida al cambio di indirizzo. */
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
+      if (!a) return;
+      var id = a.getAttribute('href').slice(1);
+      if (id !== 'top' && id !== '' && VISTE.indexOf(id) < 0) return;
+      e.preventDefault();
+      try { if (location.hash !== '#' + id) history.pushState(null, '', '#' + id); } catch (err) {}
+      mostra(id);
+    });
+    window.addEventListener('popstate', function () { mostra(); });
     mostra();
 
     /* Menu mobile: si chiude dopo la scelta. */
