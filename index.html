@@ -175,6 +175,9 @@
   .mp-cta p { color: var(--fg-muted); font-size: 15px; max-width: 52ch; }
   .soon { display: flex; gap: 14px; align-items: flex-start; background: rgba(247,168,27,.1); border: 1px solid rgba(247,168,27,.45); border-radius: 12px; padding: 16px 18px; max-width: 70ch; font-size: 15px; color: rgba(255,255,255,.88); }
   .soon .lock { font-size: 22px; line-height: 1; }
+  .soon-cid { margin-top: 10px; font-size: 13px; color: rgba(255,255,255,.6); }
+  .soon-cid a { color: #FFD37A; font-weight: 700; text-decoration: none; }
+  .soon-cid a:hover { text-decoration: underline; }
   .wordmark em { font-style: normal; color: var(--gold-deep); }
   .on-dark .wordmark em { color: var(--gold); }
   .next.closed .pulse { background: var(--gold); box-shadow: none; animation: none; }
@@ -587,7 +590,7 @@
     </div>
   </div>
   <div class="legal">
-    <div class="wrap">Rotary e il marchio Rotary sono marchi registrati di Rotary International, usati con autorizzazione dal Distretto 2090. Gli indirizzi email raccolti con il registro delle presenze e i dati dei moduli sono trattati esclusivamente per l'organizzazione del percorso. <span id="ver" style="opacity:.5">v3.1.1</span></div>
+    <div class="wrap">Rotary e il marchio Rotary sono marchi registrati di Rotary International, usati con autorizzazione dal Distretto 2090. Gli indirizzi email raccolti con il registro delle presenze e i dati dei moduli sono trattati esclusivamente per l'organizzazione del percorso. <span id="ver" style="opacity:.5">v3.1.2</span></div>
   </div>
 </footer>
 
@@ -645,7 +648,7 @@
     });
     if (!MAIPLACE_APERTA) {
       var cta = document.querySelector('.mp-cta');
-      if (cta) cta.innerHTML = '<div class="soon"><span class="lock" aria-hidden="true">🔒</span><div><b>Apre dopo i primi incontri.</b> mAIplace non è ancora accessibile: lo annunceremo via email e nel gruppo WhatsApp dei referenti, e da quel giorno si entrerà con la propria email, senza password.</div></div>';
+      if (cta) cta.innerHTML = '<div class="soon"><span class="lock" aria-hidden="true">🔒</span><div><b>Apre dopo i primi incontri.</b> mAIplace non è ancora accessibile: lo annunceremo via email e nel gruppo WhatsApp dei referenti, e da quel giorno si entrerà con la propria email, senza password.<div class="soon-cid"><a href="' + (LINK.piazza || '#') + '" target="_blank" rel="noopener">Sei della Commissione? Apri mAIplace →</a> <span>(accesso anticipato: solo gli indirizzi autorizzati)</span></div></div></div>';
       var tile = document.querySelector('.menu-five a[href="#maiplace"]');
       if (tile) { var w = tile.querySelector('.who'); if (w) w.textContent = 'In arrivo'; var g = tile.querySelector('.go'); if (g) g.textContent = 'Scopri →'; }
     }
