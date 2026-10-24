@@ -335,7 +335,7 @@
         document.getElementById('pz-link').href = r.url;
         document.getElementById('pz-k-membri').textContent = r.membri; document.getElementById('pz-k-richieste').textContent = r.richieste.length; document.getElementById('pz-k-feedback').textContent = r.feedback.length;
         document.getElementById('n-richieste').textContent = r.richieste.length; document.getElementById('n-feedback').textContent = r.feedback.length;
-        document.getElementById('pz-scrittura').innerHTML = r.scrittura ? 'Fase 2: <strong>i soci possono pubblicare</strong> (Config "Piazza scrittura soci" = Sì)' : 'Fase 1: scrive solo la Commissione (Config "Piazza scrittura soci" = No)';
+        document.getElementById('pz-scrittura').innerHTML = (r.aperta === false ? '<strong style="color:#B3261E">Chiusa ai soci</strong> (Config "Piazza aperta" = No): entrano solo ' + (r.anticipato ? esc(r.anticipato) : 'nessuno — compilare "Piazza accesso anticipato"') + ' · ' : '<strong>Aperta ai soci</strong> · ') + (r.scrittura ? 'Fase 2: <strong>i soci possono pubblicare</strong> (Config "Piazza scrittura soci" = Sì)' : 'Fase 1: scrive solo la Commissione (Config "Piazza scrittura soci" = No)');
         pzDisegna();
       }).catch(function (e) { document.getElementById('pz-sub').textContent = 'Back end non raggiungibile: ' + e.message; });
     }

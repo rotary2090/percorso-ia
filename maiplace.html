@@ -425,7 +425,7 @@
     $('f-accedi').addEventListener('submit', function (ev) {
       ev.preventDefault(); var b = ev.target.querySelector('button'), m = $('m-accedi'); b.disabled = true; m.className = 'msg'; m.textContent = 'Un momento…';
       api('piazza.accedi', { email: $('em').value.trim() }).then(function (r) {
-        if (!r.ok) { m.className = 'msg err'; m.textContent = r.errore || 'Errore.'; return; }
+        if (!r.ok) { m.className = 'msg ' + (r.errore === 'chiusa' ? 'ok' : 'err'); m.textContent = r.errore === 'chiusa' ? r.messaggio : (r.errore || 'Errore.'); return; }
         m.className = 'msg ' + (r.inviato ? 'ok' : 'err'); m.textContent = r.messaggio;
         if (!r.inviato) { $('d-richiedi').open = true; $('r-email').value = $('em').value.trim(); }
       }).catch(function (e) { m.className = 'msg err'; m.textContent = 'Collegamento non riuscito: ' + e.message; }).then(function () { b.disabled = false; });
@@ -433,7 +433,7 @@
     $('f-richiedi').addEventListener('submit', function (ev) {
       ev.preventDefault(); var b = ev.target.querySelector('button'), m = $('m-richiedi'); b.disabled = true; m.className = 'msg'; m.textContent = 'Invio…';
       api('piazza.richiedi', { nome: $('r-nome').value.trim(), club: $('r-club').value.trim(), email: $('r-email').value.trim(), messaggio: $('r-msg').value.trim() }).then(function (r) {
-        m.className = 'msg ' + (r.ok ? 'ok' : 'err'); m.textContent = r.ok ? r.messaggio : (r.errore || 'Errore.');
+        m.className = 'msg ' + (r.ok || r.errore === 'chiusa' ? 'ok' : 'err'); m.textContent = r.ok || r.errore === 'chiusa' ? r.messaggio : (r.errore || 'Errore.');
         if (r.ok) ev.target.reset();
       }).catch(function (e) { m.className = 'msg err'; m.textContent = 'Collegamento non riuscito: ' + e.message; }).then(function () { b.disabled = false; });
     });
@@ -448,7 +448,7 @@
       modoSocio(true); vai('load');
       api('piazza.contenuti').then(function (r) {
         if (!r.ok) {
-          if (r.errore === 'accesso' || r.errore === 'scaduto') { esci(r.messaggio); return; }
+          if (r.errore === 'accesso' || r.errore === 'scaduto' || r.errore === 'chiusa') { esci(r.messaggio); return; }
           $('info-box').textContent = r.errore || 'Errore.'; vai('info'); return;
         }
         DATI = r; disegnaTutto();
