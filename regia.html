@@ -103,6 +103,22 @@
   .pz-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } @media (max-width: 600px) { .pz-row { grid-template-columns: 1fr; } }
   .pz-form .chk { display: flex; align-items: center; gap: 8px; font-size: 14px; } .pz-form .chk input { width: auto; }
   .pz-kpi { display: flex; gap: 10px 22px; flex-wrap: wrap; font-size: 14px; margin-top: 10px; } .pz-kpi b { font-size: 20px; color: var(--royal); margin-right: 4px; }
+  /* ---- sezione Comunicazioni ---- */
+  .com-filtri { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .com-filtri button { border: 1.5px solid var(--line); background: #fff; color: var(--fg-muted); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .com-filtri button.on { background: var(--royal); border-color: var(--royal); color: #fff; }
+  .com-item { padding: 12px 0; border-top: 1px solid var(--line); font-size: 14px; }
+  .com-item:first-child { border-top: 0; }
+  .com-item .ti { font-weight: 700; font-size: 15px; }
+  .com-item .meta { font-size: 12.5px; color: var(--fg-muted); margin-top: 2px; }
+  .com-item .og { margin-top: 4px; color: var(--fg); }
+  .com-item .btn-row { margin-top: 8px; }
+  .com-prev { margin-top: 10px; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #F2F5FA; }
+  .com-prev .bar { padding: 8px 12px; font-size: 13px; background: #fff; border-bottom: 1px solid var(--line); }
+  .com-prev .bar.err { color: #A12622; background: #FFF5F5; }
+  .com-prev iframe { display: block; width: 100%; height: 720px; border: 0; background: #F2F5FA; }
+  .com-help { font-size: 13px; color: var(--fg-muted); line-height: 1.55; background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; }
+  .com-help code { background: #EAF1FB; padding: 1px 5px; border-radius: 4px; color: var(--royal-deep); }
   footer { background: var(--royal-ink); color: rgba(255,255,255,.7); font-size: 13px; }
   footer .wrap { padding-block: 16px; }
   footer a { color: #fff; }
@@ -149,6 +165,20 @@
           <p class="note">Ogni pulsante lavora con l'account del Distretto, qualunque sia l'account Google con cui sei collegata in questo browser. Le mail partono da ai.rotary2090@gmail.com.</p>
           </div>
         </div>
+        <div class="card" id="card-com">
+          <span class="eyebrow">Comunicazioni</span>
+          <h2>Le mail del percorso: anteprima, modifica, invio</h2>
+          <p class="sub" id="com-sub">Lettura della scheda Comunicazioni in corso…</p>
+          <div id="com-body" hidden>
+            <div class="pz-kpi"><span><b id="com-k-n">0</b> comunicazioni</span><span><b id="com-k-ml">0</b> indirizzi in mailing list</span><span><b id="com-k-quota">–</b> mail inviabili oggi dallo script</span></div>
+            <div class="com-filtri" id="com-filtri"><button data-f="" class="on">Tutte</button><button data-f="0">Generali</button><button data-f="1">Incontro 1</button><button data-f="2">Incontro 2</button><button data-f="3">Incontro 3</button><button data-f="4">Incontro 4</button></div>
+            <div class="btn-row" style="margin-top:12px"><button class="btn-sm" data-com="nuova">Nuova comunicazione</button><button class="btn-sm" data-com="aggiorna">Aggiorna l'elenco</button></div>
+            <div id="com-form"></div>
+            <div id="com-lista" style="margin-top:8px"></div>
+            <div class="out" id="com-out" style="margin-top:14px">Pronto.</div>
+            <p class="note">I testi vivono nella scheda <strong>Comunicazioni</strong> del foglio di regia: si modificano da qui o direttamente nel foglio. <strong>Invia</strong> spedisce dallo script, una mail per destinatario, con la quota di Apps Script (100 destinatari al giorno, condivisa con mAIplace e gli altri invii). <strong>Crea bozza in Gmail</strong> mette la mail finita, con i destinatari in Ccn, nelle Bozze di ai.rotary2090: si apre Gmail e si preme Invia, con la quota di Gmail (500 al giorno) e la copia in Inviati. <strong>Prova a me</strong> la manda solo ad ai.rotary2090.</p>
+          </div>
+        </div>
         <div class="card" id="card-backend" hidden>
           <span class="eyebrow">Back end</span>
           <h2>Foglio, Drive, moduli, script</h2>
@@ -184,10 +214,10 @@
         <div class="card">
           <span class="eyebrow">Promemoria</span>
           <ul class="links">
-            <li><strong>Come arriva il link ai soci (due canali).</strong> 1) <em>Invito via email</em> a tutta la mailing list (scheda "Mailing list" del foglio, costruita con i nominativi segnalati dai club): pulsante "Manda invito via email". 2) <em>Gruppo WhatsApp dei referenti</em>: pulsante "Testo per WhatsApp", copia e incolla nel gruppo. I referenti girano il link ai soci del club. Il link Meet non va sul sito pubblico.</li>
+            <li><strong>Come arriva il link ai soci (due canali).</strong> 1) <em>Invito via email</em> a tutta la mailing list (scheda "Mailing list" del foglio, costruita con i nominativi segnalati dai club): pulsante "Invito con il link Meet", che porta alla comunicazione pronta (anteprima, poi Invia o Crea bozza in Gmail). 2) <em>Gruppo WhatsApp dei referenti</em>: pulsante "Testo per WhatsApp", copia e incolla nel gruppo. I referenti girano il link ai soci del club. Il link Meet non va sul sito pubblico.</li>
             <li>Il registro presenze si incolla nella chat di Meet durante l'incontro (link qui sotto e in Config).</li>
             <li>Si registra solo la parte delle pillole: alla fine dell'ultima pillola il facilitatore ferma la registrazione prima di aprire il confronto.</li>
-            <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri accessi</strong> → <strong>Manda materiali e questionario</strong> (a chi era presente, cioè ha compilato il registro di quell'incontro, comunque abbia ricevuto il link).</li>
+            <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri la cartella ai presenti</strong> (dà il permesso di lettura sulla cartella Drive a chi ha compilato il registro: non c'entra con Meet) → <strong>Materiali e questionario ai presenti</strong> (la mail con cartella e questionario, a chi ha avuto l'accesso).</li>
             <li><strong>Piano B della diretta.</strong> Il Meet lo avvia chi l'ha creato oppure uno dei co-organizzatori indicati in Config (si collegano al link normale e la riunione parte). Solo se il link normale non funziona proprio: aprire il <em>link di riserva</em> (creato da un altro account della Commissione) e comunicarlo subito ai referenti nel gruppo WhatsApp.</li>
           </ul>
           <details class="pw-change">
@@ -275,10 +305,11 @@
           (i.coorganizzatori ? ' · può avviarlo anche: ' + esc(i.coorganizzatori) : ' · nessun co-organizzatore indicato') +
           (i.riserva ? ' · <a href="' + esc(i.riserva) + '" target="_blank" rel="noopener">link di riserva</a>' : ' · nessun link di riserva') + '</div></div>' +
           '<div class="btn-row">' +
-          '<button class="btn-sm" data-az="mandaPromemoria" data-n="' + i.n + '">Manda invito via email (mailing list)</button>' +
+          '<button class="btn-sm" type="button" data-com-go="invito-' + i.n + '">Invito con il link Meet</button>' +
+          '<button class="btn-sm" type="button" data-com-go="promemoria-' + i.n + '">Promemoria del giorno</button>' +
           '<button class="btn-sm" type="button" data-wa="' + i.n + '">Testo per WhatsApp</button>' +
-          '<button class="btn-sm" data-az="apriAccessi" data-n="' + i.n + '">Apri accessi</button>' +
-          '<button class="btn-sm" data-az="mandaQuestionario" data-n="' + i.n + '">Manda materiali e questionario</button>' +
+          '<button class="btn-sm" data-az="apriAccessi" data-n="' + i.n + '">Apri la cartella ai presenti</button>' +
+          '<button class="btn-sm" type="button" data-com-go="materiali-' + i.n + '">Materiali e questionario ai presenti</button>' +
           '<button class="btn-sm" data-az="riepilogo" data-n="' + i.n + '">Riepilogo</button></div>' +
           '<div class="wa" id="wa-' + i.n + '"><textarea readonly>' + esc(testoWa(i, st)) + '</textarea>' +
           '<div class="btn-row" style="margin-top:6px"><button class="btn-sm" type="button" data-copy="wa-' + i.n + '">Copia il testo</button>' +
@@ -414,6 +445,100 @@
         .then(function () { tutti.forEach(function (x) { x.disabled = false; }); });
     });
 
+    /* ================= Comunicazioni ================= */
+    var COM = null, comFiltro = '', comEdit = null, comPrev = {};
+    function comOut(t, err) { var o = document.getElementById('com-out'); o.textContent = t; o.className = 'out' + (err ? ' err' : ''); }
+    function comLeggi() {
+      return chiama('com.lista').then(function (r) {
+        if (!r.ok) { document.getElementById('com-sub').textContent = 'Errore: ' + r.errore; return; }
+        COM = r; document.getElementById('com-body').hidden = false;
+        document.getElementById('com-sub').textContent = 'Scheda "Comunicazioni" del foglio di regia · le mail partono da ' + r.account + ' con la grafica del sito.';
+        document.getElementById('com-k-n').textContent = r.comunicazioni.length; document.getElementById('com-k-ml').textContent = r.mailing;
+        document.getElementById('com-k-quota').textContent = r.quota < 0 ? '–' : r.quota;
+        comDisegna();
+      }).catch(function (e) { document.getElementById('com-sub').textContent = 'Back end non raggiungibile: ' + e.message; });
+    }
+    function comDestOpzioni(sel) {
+      var o = [['mailing', 'Mailing list (tutti i referenti)'], ['accessi:1', 'Presenti dell\'incontro 1 (accessi aperti)'], ['accessi:2', 'Presenti dell\'incontro 2'], ['accessi:3', 'Presenti dell\'incontro 3'], ['accessi:4', 'Presenti dell\'incontro 4'], ['membri', 'Membri di mAIplace']];
+      return o.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === sel ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('');
+    }
+    function comFormHtml(c) {
+      if (!c || c.nuova) c = { chiave: '', titolo: '', incontro: '', oggetto: '', destinatari: 'mailing', testo: 'Cara amica, caro amico nel Rotary,\n\n\n\nA presto e intanto… buon Rotary\n\n**Michele Bresciani**\nPresidente Commissione Innovazione Digitale D2090', note: '', nuova: true };
+      var v = function (k) { return esc(c[k] || ''); };
+      return '<div class="pz-form" id="com-f"><strong>' + (c.nuova ? 'Nuova comunicazione' : 'Modifica — ' + esc(c.titolo)) + '</strong>' +
+        '<div class="pz-row"><div><label>Chiave (identificativo, es. promemoria-2)</label><input id="comf-chiave" value="' + v('chiave') + '"' + (c.nuova ? '' : ' readonly') + '></div><div><label>Titolo (compare sotto "Percorso IA 2026-27" nella testata)</label><input id="comf-titolo" value="' + v('titolo') + '"></div></div>' +
+        '<div class="pz-row"><div><label>Incontro di riferimento (per i segnaposto)</label><select id="comf-incontro">' + ['', '1', '2', '3', '4'].map(function (n) { return '<option value="' + n + '"' + (String(c.incontro || '') === n ? ' selected' : '') + '>' + (n ? 'Incontro ' + n : 'Nessuno (comunicazione generale)') + '</option>'; }).join('') + '</select></div><div><label>Destinatari</label><select id="comf-dest">' + comDestOpzioni(c.destinatari) + '</select></div></div>' +
+        '<div><label>Oggetto</label><input id="comf-oggetto" value="' + v('oggetto') + '"></div>' +
+        '<div><label>Testo</label><textarea id="comf-testo" style="min-height:280px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px">' + v('testo') + '</textarea></div>' +
+        '<div class="com-help"><strong>Come si scrive.</strong> Paragrafi separati da una riga vuota · <code>**grassetto**</code> · <code>[testo](https://…)</code> link · un paragrafo fatto solo di <code>[Testo del pulsante](https://…)</code> diventa il pulsante dorato · righe che iniziano con <code>&gt;</code> formano il riquadro blu (la prima riga è l\'etichetta) · righe con <code>- </code> sono un elenco · <code># Titolo</code> un sottotitolo. Testata, riga d\'oro e piè di pagina li mette lo script.<br><strong>Segnaposto</strong> (riempiti da Config per l\'incontro scelto): ' + (COM ? COM.segnaposto.map(function (k) { return '<code>{{' + k + '}}</code>'; }).join(' ') : '') + '. <code>{{data}}</code> = "mercoledì 4 novembre", <code>{{dataBreve}}</code> = "04/11/2026", <code>{{prossimo}}</code> = frase sul prossimo incontro.</div>' +
+        '<div><label>Note interne (non vanno nella mail)</label><input id="comf-note" value="' + v('note') + '"></div>' +
+        '<div class="btn-row"><button class="btn-sm" data-com="salva">Salva nel foglio</button><button class="btn-sm" data-com="annulla">Annulla</button>' + (c.nuova ? '' : '<button class="btn-sm warn" data-com="elimina" data-chiave="' + v('chiave') + '" data-conferma="Elimino questa comunicazione dal foglio. Continuare?">Elimina</button>') + '</div></div>';
+    }
+    function comDisegna() {
+      if (!COM) return;
+      document.querySelectorAll('#com-filtri button').forEach(function (b) { b.classList.toggle('on', b.dataset.f === comFiltro); });
+      document.getElementById('com-form').innerHTML = comEdit ? comFormHtml(comEdit) : '';
+      var lista = COM.comunicazioni.filter(function (c) { return comFiltro === '' || (comFiltro === '0' ? !c.incontro : String(c.incontro) === comFiltro); });
+      document.getElementById('com-lista').innerHTML = lista.length ? lista.map(function (c) {
+        var ultimo = (c.ultimo || '').split('\n')[0];
+        return '<div class="com-item" id="com-i-' + esc(c.chiave) + '"><div class="ti">' + esc(c.titoloR || c.titolo) + '</div>' +
+          '<div class="meta">' + esc(c.chiave) + (c.incontro ? ' · incontro ' + esc(c.incontro) : ' · generale') + ' · a: ' + esc(c.destinatariLabel) + ' (' + c.destinatariN + ')' + (ultimo ? ' · ultimo invio: ' + esc(ultimo) : ' · mai inviata') + '</div>' +
+          '<div class="og">Oggetto: ' + esc(c.oggettoR || c.oggetto) + '</div>' +
+          '<div class="btn-row"><button class="btn-sm" data-com="anteprima" data-chiave="' + esc(c.chiave) + '">' + (comPrev[c.chiave] ? 'Chiudi anteprima' : 'Anteprima') + '</button>' +
+          '<button class="btn-sm" data-com="modifica" data-chiave="' + esc(c.chiave) + '">Modifica</button>' +
+          '<button class="btn-sm" data-com="prova" data-chiave="' + esc(c.chiave) + '">Prova a me</button>' +
+          '<button class="btn-sm" data-com="bozza" data-chiave="' + esc(c.chiave) + '" data-conferma="Creo in Gmail la bozza di questa mail con ' + c.destinatariN + ' destinatari in Ccn (' + esc(c.destinatariLabel) + '). Non parte nulla finché non la invii da Gmail. Continuare?">Crea bozza in Gmail</button>' +
+          '<button class="btn-sm warn" data-com="invia" data-chiave="' + esc(c.chiave) + '" data-conferma="Invio questa mail dallo script a ' + c.destinatariN + ' destinatari (' + esc(c.destinatariLabel) + '). Continuare?">Invia</button></div>' +
+          '<div class="com-prev" id="com-p-' + esc(c.chiave) + '"' + (comPrev[c.chiave] ? '' : ' hidden') + '></div></div>';
+      }).join('') : '<p class="note">Nessuna comunicazione in questo gruppo.</p>';
+      Object.keys(comPrev).forEach(function (k) { if (comPrev[k] && document.getElementById('com-p-' + k)) comMostraAnteprima(k, comPrev[k]); });
+    }
+    function comMostraAnteprima(chiave, r) {
+      var box = document.getElementById('com-p-' + chiave); if (!box) return;
+      box.hidden = false;
+      box.innerHTML = '<div class="bar' + (r.mancanti && r.mancanti.length ? ' err' : '') + '"><strong>Oggetto:</strong> ' + esc(r.oggetto) + ' · <strong>a:</strong> ' + esc(r.destinatariLabel) + ' (' + r.destinatariN + ')' + (r.mancanti && r.mancanti.length ? ' · <strong>segnaposto senza valore in Config: ' + esc(r.mancanti.join(', ')) + '</strong>' : '') + '</div>';
+      var f = document.createElement('iframe'); f.setAttribute('sandbox', ''); f.title = 'Anteprima'; f.srcdoc = '<!doctype html><meta charset="utf-8"><body style="margin:0">' + r.html; box.appendChild(f);
+    }
+    document.getElementById('com-filtri').addEventListener('click', function (ev) { var b = ev.target.closest('button[data-f]'); if (!b) return; comFiltro = b.dataset.f; comDisegna(); });
+    document.addEventListener('click', function (ev) {
+      var g = ev.target.closest('[data-com-go]'); if (!g) return;
+      var k = g.dataset.comGo; comFiltro = ''; comEdit = null;
+      var go = function () { var it = document.getElementById('com-i-' + k); if (!it) { comOut('Comunicazione "' + k + '" non trovata nel foglio.', true); document.getElementById('card-com').scrollIntoView({ behavior: 'smooth' }); return; } it.scrollIntoView({ behavior: 'smooth', block: 'start' }); if (!comPrev[k]) comAnteprima(k); };
+      if (COM) { comDisegna(); go(); } else comLeggi().then(go);
+    });
+    function comAnteprima(k) {
+      comOut('Preparo l\'anteprima…');
+      chiama('com.anteprima', 0, { chiave: k }).then(function (r) { if (!r.ok) { comOut('Errore: ' + r.errore, true); return; } comPrev[k] = r; comOut('Anteprima pronta: così la vedono i destinatari.'); comDisegna(); })
+        .catch(function (e) { comOut('Errore di collegamento: ' + e.message, true); });
+    }
+    document.getElementById('card-com').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-com]'); if (!b) return;
+      var az = b.dataset.com, k = b.dataset.chiave;
+      if (az === 'aggiorna') { comOut('Rileggo il foglio…'); comLeggi().then(function () { comOut('Elenco aggiornato.'); }); return; }
+      if (az === 'nuova') { comEdit = null; comEdit = { nuova: true }; comDisegna(); document.getElementById('com-f').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      if (az === 'modifica') { comEdit = COM.comunicazioni.filter(function (x) { return x.chiave === k; })[0]; comDisegna(); document.getElementById('com-f').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+      if (az === 'annulla') { comEdit = null; comDisegna(); return; }
+      if (az === 'anteprima') { if (comPrev[k]) { delete comPrev[k]; comDisegna(); } else comAnteprima(k); return; }
+      if (b.dataset.conferma && !b.dataset.confermato) { b.dataset.confermato = '1'; b.textContent = 'Confermo: ' + b.textContent; comOut(b.dataset.conferma); return; }
+      var corpo = null, msg = '';
+      if (az === 'salva') {
+        var g = function (id) { return document.getElementById('comf-' + id).value; };
+        corpo = { chiave: g('chiave').trim(), titolo: g('titolo').trim(), incontro: g('incontro'), destinatari: g('dest'), oggetto: g('oggetto').trim(), testo: g('testo'), note: g('note') };
+        if (!corpo.chiave || !corpo.oggetto || !corpo.testo) { comOut('Servono chiave, oggetto e testo.', true); return; }
+        az = 'com.salva'; msg = 'Salvo nel foglio…'; delete comPrev[corpo.chiave];
+      }
+      else if (az === 'elimina') { corpo = { chiave: k }; az = 'com.elimina'; }
+      else if (az === 'prova') { corpo = { chiave: k }; az = 'com.prova'; msg = 'Mando la prova ad ai.rotary2090…'; }
+      else if (az === 'bozza') { corpo = { chiave: k }; az = 'com.bozza'; msg = 'Creo la bozza in Gmail…'; }
+      else if (az === 'invia') { corpo = { chiave: k }; az = 'com.invia'; msg = 'Invio in corso: una mail per destinatario, può volerci qualche minuto…'; }
+      else return;
+      var tutti = document.querySelectorAll('#card-com button'); tutti.forEach(function (x) { x.disabled = true; });
+      comOut(msg || 'Eseguo…');
+      chiama(az, 0, corpo).then(function (r) { if (r.ok) { comOut(r.messaggio || 'Fatto.'); if (az === 'com.salva' || az === 'com.elimina') comEdit = null; comLeggi(); } else comOut('Errore: ' + (r.errore || 'sconosciuto'), true); })
+        .catch(function (e) { comOut('Errore di collegamento: ' + e.message, true); })
+        .then(function () { tutti.forEach(function (x) { x.disabled = false; }); });
+    });
+
     function apri(token) {
       TOKEN = token; gate.hidden = true; box.hidden = false;
       try { sessionStorage.setItem('ia2090-token', token); } catch (e) {}
@@ -430,7 +555,7 @@
         document.getElementById('stato-sub').textContent = 'Dati dell\'ultima apertura: aggiornamento dal back end in corso…';
       }
       leggiStato().then(function (st) {
-        if (st.ok) { disegna(st); try { localStorage.setItem('ia2090-stato', JSON.stringify(st)); } catch (e) {} pzLeggi(); }
+        if (st.ok) { disegna(st); try { localStorage.setItem('ia2090-stato', JSON.stringify(st)); } catch (e) {} comLeggi(); pzLeggi(); }
         else if (!vecchio) fallito('Il back end rifiuta la password: ' + (st.errore || '') + '.');
         else document.getElementById('stato-sub').textContent = 'Aggiornamento non riuscito: ' + (st.errore || '') + ' (dati dell\'ultima apertura).';
       }).catch(function (e) {
