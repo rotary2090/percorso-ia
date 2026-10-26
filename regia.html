@@ -161,6 +161,7 @@
           <div id="incontri"></div>
           <div class="btn-row" style="margin-top:14px">
             <button class="btn-sm" data-az="aggiornaClubNeiModuli">Aggiorna i club nei moduli</button>
+            <button class="btn-sm" data-az="privacyModuli" data-conferma="Allineo i tre moduli Google all'informativa 1.5: descrizione con il link, casella di consenso ai materiali nel registro presenze, questionario anonimo, casella di consenso nel modulo Showcase. Si può ripetere senza doppioni. Continuare?">Moduli: testi privacy</button>
             <button class="btn-sm warn" data-az="setupIniziale" data-conferma="Il setup iniziale va eseguito una sola volta, alla prima installazione. Continuare?">Setup iniziale</button>
           </div>
           <div class="out" id="out" style="margin-top:14px">Pronto.</div>
@@ -217,7 +218,7 @@
           <span class="eyebrow">Promemoria</span>
           <ul class="links">
             <li><strong>Come arriva il link ai soci (due canali).</strong> 1) <em>Invito via email</em> a tutta la mailing list (scheda "Mailing list" del foglio, costruita con i nominativi segnalati dai club): pulsante "Invito con il link Meet", che porta alla comunicazione pronta (anteprima, poi Invia o Crea bozza in Gmail). 2) <em>Gruppo WhatsApp dei referenti</em>: pulsante "Testo per WhatsApp", copia e incolla nel gruppo. I referenti girano il link ai soci del club. Il link Meet non va sul sito pubblico.</li>
-            <li>Il registro presenze si incolla nella chat di Meet durante l'incontro (link qui sotto e in Config).</li>
+            <li>Il registro presenze si incolla nella chat di Meet durante l'incontro (link qui sotto e in Config). Ha la casella di consenso ai materiali: la cartella dell'incontro si apre solo a chi l'ha spuntata (informativa 1.5). All'inizio dell'incontro si legge l'avviso sulla registrazione (volume 2, testi pronti).</li>
             <li>Si registra solo la parte delle pillole: alla fine dell'ultima pillola il facilitatore ferma la registrazione prima di aprire il confronto.</li>
             <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri la cartella ai presenti</strong> (dà il permesso di lettura sulla cartella Drive a chi ha compilato il registro: non c'entra con Meet) → <strong>Materiali e questionario ai presenti</strong> (la mail con cartella e questionario, a chi ha avuto l'accesso).</li>
             <li><strong>Piano B della diretta.</strong> Il Meet lo avvia chi l'ha creato oppure uno dei co-organizzatori indicati in Config (si collegano al link normale e la riunione parte). Solo se il link normale non funziona proprio: aprire il <em>link di riserva</em> (creato da un altro account della Commissione) e comunicarlo subito ai referenti nel gruppo WhatsApp.</li>
@@ -287,7 +288,8 @@
         'Link per partecipare: ' + (i.meet || '[link Meet da inserire in Config]') + '\n' +
         'Non serve iscriversi: giratelo ai soci del vostro club, tutti sono benvenuti.\n' +
         (st.moduli.presenze ? 'Chi vuole ricevere la registrazione delle pillole e i materiali lascia la sua email nel registro presenze durante l\'incontro (facoltativo): i materiali vanno a chi era presente. Il confronto non viene registrato.\n' : '') +
-        'Info: https://sites.google.com/view/percorso-ia-2026-27';
+        'Info: https://sites.google.com/view/percorso-ia-2026-27\n' +
+        'Informativa sul trattamento dei dati: https://rotary2090.github.io/percorso-ia/informativa-privacy.pdf';
     }
     function disegna(st) {
       document.getElementById('stato-sub').textContent = 'Collegato al back end di ' + st.account + '.';
