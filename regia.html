@@ -102,6 +102,8 @@
   .pz-form textarea { min-height: 110px; resize: vertical; }
   .pz-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } @media (max-width: 600px) { .pz-row { grid-template-columns: 1fr; } }
   .pz-form .chk { display: flex; align-items: center; gap: 8px; font-size: 14px; } .pz-form .chk input { width: auto; }
+  .pz-item.wait { background: #FFF9EC; border-radius: 8px; padding-left: 10px; padding-right: 10px; }
+  .pz-motivo { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; } .pz-motivo input { flex: 1 1 240px; font: inherit; font-size: 13.5px; padding: 8px 10px; border: 1.5px solid var(--line); border-radius: 6px; }
   .pz-kpi { display: flex; gap: 10px 22px; flex-wrap: wrap; font-size: 14px; margin-top: 10px; } .pz-kpi b { font-size: 20px; color: var(--royal); margin-right: 4px; }
   /* ---- sezione Comunicazioni ---- */
   .com-filtri { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
@@ -194,10 +196,10 @@
             <div class="btn-row" style="margin-top:10px"><button class="btn-sm warn" data-az="piazzaSetup" data-conferma="Attivo mAIplace: creo le schede e i contenuti iniziali. Continuare?">Attiva mAIplace (setup)</button></div>
           </div>
           <div id="pz-on" hidden>
-            <div class="pz-kpi"><span><b id="pz-k-membri">0</b> membri</span><span><b id="pz-k-richieste">0</b> richieste in attesa</span><span><b id="pz-k-feedback">0</b> messaggi da gestire</span><span id="pz-scrittura"></span><span><a id="pz-link" href="#" target="_blank" rel="noopener">Apri mAIplace</a></span></div>
+            <div class="pz-kpi"><span><b id="pz-k-membri">0</b> membri</span><span><b id="pz-k-richieste">0</b> richieste in attesa</span><span><b id="pz-k-post">0</b> post da approvare</span><span><b id="pz-k-feedback">0</b> messaggi da gestire</span><span id="pz-scrittura"></span><span><a id="pz-link" href="#" target="_blank" rel="noopener">Apri mAIplace</a></span></div>
             <div class="pz-tabs" id="pz-tabs">
               <button data-p="richieste" class="on">Richieste <span class="n" id="n-richieste">0</span></button>
-              <button data-p="post">Bacheca</button><button data-p="risorsa">Libreria</button><button data-p="vetrina">Vetrina</button><button data-p="notiziario">Notiziario</button>
+              <button data-p="post">Bacheca <span class="n" id="n-post">0</span></button><button data-p="risorsa">Libreria</button><button data-p="vetrina">Vetrina</button><button data-p="notiziario">Notiziario</button>
               <button data-p="feedback">Messaggi <span class="n" id="n-feedback">0</span></button><button data-p="membri">Membri</button>
             </div>
             <div class="pz-pane" id="pz-richieste"></div>
@@ -208,7 +210,7 @@
             <div class="pz-pane" id="pz-feedback"></div>
             <div class="pz-pane" id="pz-membri"></div>
             <div class="out" id="pz-out" style="margin-top:14px">Pronto.</div>
-            <p class="note">Tutto quello che pubblichi qui compare subito in mAIplace; "Nascondi" lo toglie dalla vista dei soci senza cancellarlo dal foglio. Il notiziario parte via email a tutti i membri (massimo 90 al giorno: se sono di più, ripremere "Invia" il giorno dopo).</p>
+            <p class="note">Tutto quello che pubblichi qui compare subito in mAIplace. I post dei soci (fase 2) arrivano in "Da approvare": Approva li pubblica, Rifiuta li lascia visibili solo all'autore con il motivo; in entrambi i casi l'autore riceve una mail. Se un socio modifica un suo post, torna "Da approvare". "Nascondi" toglie dalla vista senza cancellare; "Elimina" manda i post nel Cestino (ripristinabili) e cancella definitivamente risorse, vetrina e notiziario. Il notiziario parte via email a tutti i membri (massimo 90 al giorno: se sono di più, ripremere "Invia" il giorno dopo).</p>
           </div>
         </div>
         <div class="card">
@@ -351,7 +353,7 @@
     });
 
     /* ================= Piazza ================= */
-    var PZ = null, pzTab = 'richieste', pzEdit = {};
+    var PZ = null, pzTab = 'richieste', pzEdit = {}, pzPostFiltro = 'pubblicati';
     function pzOut(t, err) { var o = document.getElementById('pz-out'); o.textContent = t; o.className = 'out' + (err ? ' err' : ''); }
     function pzData(iso) { if (!iso) return ''; var d = new Date(iso); return isNaN(d) ? String(iso) : d.toLocaleDateString('it-IT'); }
     function pzLeggi() {
@@ -366,21 +368,29 @@
         document.getElementById('pz-link').href = r.url;
         document.getElementById('pz-k-membri').textContent = r.membri; document.getElementById('pz-k-richieste').textContent = r.richieste.length; document.getElementById('pz-k-feedback').textContent = r.feedback.length;
         document.getElementById('n-richieste').textContent = r.richieste.length; document.getElementById('n-feedback').textContent = r.feedback.length;
+        var daApprovare = r.post.filter(function (p) { return p.stato === 'In attesa'; }).length;
+        document.getElementById('pz-k-post').textContent = daApprovare; document.getElementById('n-post').textContent = daApprovare;
+        if (daApprovare && !PZ._visto) { pzPostFiltro = 'attesa'; } PZ._visto = true;
         document.getElementById('pz-scrittura').innerHTML = (r.aperta === false ? '<strong style="color:#B3261E">Chiusa ai soci</strong> (Config "Piazza aperta" = No): entrano solo ' + (r.anticipato ? esc(r.anticipato) : 'nessuno — compilare "Piazza accesso anticipato"') + ' · ' : '<strong>Aperta ai soci</strong> · ') + (r.scrittura ? 'Fase 2: <strong>i soci possono pubblicare</strong> (Config "Piazza scrittura soci" = Sì)' : 'Fase 1: scrive solo la Commissione (Config "Piazza scrittura soci" = No)');
         pzDisegna();
       }).catch(function (e) { document.getElementById('pz-sub').textContent = 'Back end non raggiungibile: ' + e.message; });
     }
     function pzItemHtml(tipo, it) {
       var meta = [];
-      if (tipo === 'post') meta = [it.colonna, it.autore, pzData(it.data), (it.fissato ? '📌 in evidenza' : ''), (it.interessa ? '★ ' + it.interessa : '')];
+      if (tipo === 'post') meta = [it.colonna, it.autore + (it.emailAutore ? ' (' + it.emailAutore + ')' : ''), pzData(it.data), (it.stato && it.stato !== 'Pubblicato' ? '<strong>' + esc(it.stato) + '</strong>' : ''), (it.nota || ''), (it.fissato ? '📌 in evidenza' : ''), (it.interessa ? '★ ' + it.interessa : '')];
       if (tipo === 'risorsa') meta = [it.tema, it.tipo, pzData(it.data)];
       if (tipo === 'vetrina') meta = [it.club, it.stato, it.referente, pzData(it.data)];
       if (tipo === 'notiziario') meta = [pzData(it.data), it.inviatoA ? 'inviato a ' + it.inviatoA + (it.dataInvio ? ' il ' + pzData(it.dataInvio) : '') : 'non ancora inviato'];
-      var btns = '<button class="btn-sm" data-pz="modifica" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '">Modifica</button>' +
-        '<button class="btn-sm" data-pz="visibile" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '" data-v="' + (it.visibile ? '0' : '1') + '">' + (it.visibile ? 'Nascondi' : 'Mostra') + '</button>' +
-        (tipo === 'post' ? '<button class="btn-sm" data-pz="fissa" data-id="' + esc(it.id) + '" data-v="' + (it.fissato ? '0' : '1') + '">' + (it.fissato ? 'Togli evidenza' : 'In evidenza') + '</button>' : '') +
-        (tipo === 'notiziario' ? '<button class="btn-sm warn" data-pz="invia" data-id="' + esc(it.id) + '" data-conferma="Invio questo numero via email a tutti i membri di mAIplace. Continuare?">Invia ai membri</button>' : '');
-      return '<div class="pz-item' + (it.visibile ? '' : ' off') + '"><div><div class="ti">' + esc(it.titolo) + '</div><div class="meta">' + meta.filter(Boolean).map(esc).join(' · ') + '</div><div class="tx">' + esc(it.testo || it.descrizione || '') + '</div></div><div class="btn-row">' + btns + '</div></div>';
+      var attesa = tipo === 'post' && it.stato === 'In attesa', cestino = tipo === 'post' && it.stato === 'Eliminato';
+      var btns = (attesa ? '<button class="btn-sm" data-pz="approva-post" data-id="' + esc(it.id) + '">✔ Approva e pubblica</button><button class="btn-sm warn" data-pz="rifiuta-post" data-id="' + esc(it.id) + '">Rifiuta…</button>' : '') +
+        (cestino ? '<button class="btn-sm" data-pz="ripristina" data-id="' + esc(it.id) + '">Ripristina</button>' :
+          '<button class="btn-sm" data-pz="modifica" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '">Modifica</button>' +
+          (attesa ? '' : '<button class="btn-sm" data-pz="visibile" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '" data-v="' + (it.visibile ? '0' : '1') + '">' + (it.visibile ? 'Nascondi' : 'Mostra') + '</button>') +
+          (tipo === 'post' && !attesa ? '<button class="btn-sm" data-pz="fissa" data-id="' + esc(it.id) + '" data-v="' + (it.fissato ? '0' : '1') + '">' + (it.fissato ? 'Togli evidenza' : 'In evidenza') + '</button>' : '') +
+          (tipo === 'notiziario' ? '<button class="btn-sm warn" data-pz="invia" data-id="' + esc(it.id) + '" data-conferma="Invio questo numero via email a tutti i membri di mAIplace. Continuare?">Invia ai membri</button>' : '') +
+          '<button class="btn-sm warn" data-pz="elimina" data-tipo="' + tipo + '" data-id="' + esc(it.id) + '" data-conferma="' + (tipo === 'post' ? 'Il post va nel cestino (invisibile a tutti, ripristinabile da qui). Continuare?' : 'Eliminazione definitiva dal foglio. Continuare?') + '">Elimina</button>');
+      var motivo = attesa ? '<div class="pz-motivo" id="pz-motivo-' + esc(it.id) + '" hidden><input placeholder="Motivo per l\'autore (facoltativo, va nella mail)" id="pz-mot-' + esc(it.id) + '"><button class="btn-sm warn" data-pz="rifiuta-conferma" data-id="' + esc(it.id) + '">Confermo il rifiuto</button></div>' : '';
+      return '<div class="pz-item' + (it.visibile === false || cestino ? ' off' : '') + (attesa ? ' wait' : '') + '"><div><div class="ti">' + esc(it.titolo) + '</div><div class="meta">' + meta.filter(Boolean).map(function (x) { return String(x).indexOf('<strong>') === 0 ? x : esc(x); }).join(' · ') + '</div><div class="tx">' + esc(it.testo || it.descrizione || '') + '</div>' + motivo + '</div><div class="btn-row">' + btns + '</div></div>';
     }
     function pzFormHtml(tipo, it) {
       it = it || {}; var v = function (k) { return esc(it[k] || ''); };
@@ -411,16 +421,24 @@
         h = '<p class="note">' + PZ.membriElenco.length + ' membri in tutto. "Sospendi" revoca l\'accesso senza cancellare la riga.</p>' + PZ.membriElenco.map(function (m) { var sosp = String(m.stato || '').toLowerCase() === 'sospeso'; return '<div class="pz-item' + (sosp ? ' off' : '') + '"><div><div class="ti">' + esc(m.nome || m.email) + (m.club ? ' · ' + esc(m.club) : '') + '</div><div class="meta">' + esc(m.email) + ' · ' + esc(m.origine || '') + (m.ultimo ? ' · ultimo accesso ' + pzData(m.ultimo) : ' · mai entrato') + '</div></div><div class="btn-row"><button class="btn-sm" data-pz="sospendi" data-email="' + esc(m.email) + '" data-v="' + (sosp ? '1' : '0') + '">' + (sosp ? 'Riattiva' : 'Sospendi') + '</button></div></div>'; }).join('');
       } else {
         var lista = { post: PZ.post, risorsa: PZ.risorse, vetrina: PZ.vetrina, notiziario: PZ.notiziario }[pzTab].slice().sort(function (a, b) { return new Date(b.data) - new Date(a.data); });
-        h = (pzEdit[pzTab] ? pzFormHtml(pzTab, pzEdit[pzTab]) : pzFormHtml(pzTab)) + '<div style="margin-top:12px">' + (lista.length ? lista.map(function (it) { return pzItemHtml(pzTab, it); }).join('') : '<p class="note">Ancora niente qui.</p>') + '</div>';
+        var sotto = '';
+        if (pzTab === 'post') {
+          var nAtt = lista.filter(function (p) { return p.stato === 'In attesa'; }).length, nCes = lista.filter(function (p) { return p.stato === 'Eliminato'; }).length;
+          sotto = '<div class="pz-tabs" style="margin-top:10px"><button data-pf="attesa"' + (pzPostFiltro === 'attesa' ? ' class="on"' : '') + '>Da approvare <span class="n">' + nAtt + '</span></button><button data-pf="pubblicati"' + (pzPostFiltro === 'pubblicati' ? ' class="on"' : '') + '>Pubblicati e rifiutati</button><button data-pf="cestino"' + (pzPostFiltro === 'cestino' ? ' class="on"' : '') + '>Cestino <span class="n">' + nCes + '</span></button></div>';
+          lista = lista.filter(function (p) { return pzPostFiltro === 'attesa' ? p.stato === 'In attesa' : pzPostFiltro === 'cestino' ? p.stato === 'Eliminato' : (p.stato !== 'In attesa' && p.stato !== 'Eliminato'); });
+        }
+        h = (pzEdit[pzTab] ? pzFormHtml(pzTab, pzEdit[pzTab]) : pzFormHtml(pzTab)) + sotto + '<div style="margin-top:12px">' + (lista.length ? lista.map(function (it) { return pzItemHtml(pzTab, it); }).join('') : '<p class="note">' + (pzTab === 'post' && pzPostFiltro === 'attesa' ? 'Nessun post da approvare.' : 'Ancora niente qui.') + '</p>') + '</div>';
       }
       pane.innerHTML = h;
     }
     document.getElementById('pz-tabs').addEventListener('click', function (ev) { var b = ev.target.closest('button[data-p]'); if (!b) return; pzTab = b.dataset.p; pzDisegna(); });
+    document.getElementById('pz-post').addEventListener('click', function (ev) { var b = ev.target.closest('button[data-pf]'); if (!b) return; pzPostFiltro = b.dataset.pf; pzDisegna(); });
     document.getElementById('card-piazza').addEventListener('click', function (ev) {
       var b = ev.target.closest('[data-pz]'); if (!b) return;
       var az = b.dataset.pz, tipo = b.dataset.tipo;
       if (az === 'modifica') { pzEdit[tipo] = ({ post: PZ.post, risorsa: PZ.risorse, vetrina: PZ.vetrina, notiziario: PZ.notiziario }[tipo]).filter(function (x) { return x.id === b.dataset.id; })[0]; pzDisegna(); document.getElementById('pz-f-' + tipo).scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
       if (az === 'annulla') { delete pzEdit[tipo]; pzDisegna(); return; }
+      if (az === 'rifiuta-post') { var mb = document.getElementById('pz-motivo-' + b.dataset.id); mb.hidden = !mb.hidden; if (!mb.hidden) mb.querySelector('input').focus(); return; }
       if (b.dataset.conferma && !b.dataset.confermato) { b.dataset.confermato = '1'; b.textContent = 'Confermo: ' + b.textContent; pzOut(b.dataset.conferma); return; }
       var corpo = null, msg = '';
       if (az === 'salva') {
@@ -430,6 +448,10 @@
         corpo = { tipo: tipo, item: item }; msg = 'Salvo…'; delete pzEdit[tipo]; az = 'piazzaSalva';
       }
       else if (az === 'visibile') { corpo = { tipo: tipo, id: b.dataset.id, visibile: b.dataset.v === '1' }; az = 'piazzaVisibile'; }
+      else if (az === 'approva-post') { corpo = { id: b.dataset.id, decisione: 'approva' }; az = 'piazzaModera'; msg = 'Approvo e avviso l\'autore…'; }
+      else if (az === 'rifiuta-conferma') { corpo = { id: b.dataset.id, decisione: 'rifiuta', motivo: (document.getElementById('pz-mot-' + b.dataset.id) || {}).value || '' }; az = 'piazzaModera'; msg = 'Rifiuto e avviso l\'autore…'; }
+      else if (az === 'elimina') { corpo = { tipo: tipo, id: b.dataset.id }; az = 'piazzaElimina'; }
+      else if (az === 'ripristina') { corpo = { id: b.dataset.id }; az = 'piazzaRipristina'; }
       else if (az === 'fissa') { corpo = { id: b.dataset.id, fissato: b.dataset.v === '1' }; az = 'piazzaFissa'; }
       else if (az === 'invia') { corpo = { id: b.dataset.id }; az = 'piazzaInvia'; msg = 'Invio del notiziario in corso…'; }
       else if (az === 'approva') { corpo = { email: b.dataset.email }; az = 'piazzaApprova'; }

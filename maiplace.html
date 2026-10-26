@@ -221,6 +221,13 @@
   .act { border-top: 1px solid rgba(255,255,255,.12); margin-top: 12px; padding-top: 10px; color: rgba(255,255,255,.6); gap: 6px; flex-wrap: nowrap; }
   .act .by { display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin-right: auto; flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .act button { flex: none; }
+  .post.wait { border-style: dashed; border-color: rgba(247,168,27,.55); }
+  .post.wait::before, .post.rej::before { animation: none; background: linear-gradient(90deg, rgba(255,255,255,.25), rgba(255,255,255,.08)); }
+  .post.rej { border-color: rgba(217,83,79,.55); }
+  .stlbl { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+  .stlbl.wait { background: rgba(247,168,27,.18); color: #FFD37A; } .stlbl.rej { background: rgba(217,83,79,.2); color: #FFB3B0; }
+  .nota { font-size: 13px; color: #FFB3B0; margin-top: 8px; white-space: pre-line; }
+  .own { display: flex; gap: 6px; margin-left: 6px; } .own button { color: #8FD3F4; } .own button.del { color: #FFB3B0; } .own button.del.sure { background: rgba(217,83,79,.25); color: #fff; }
   .act .by .av { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, var(--sky), var(--gold)); color: var(--royal-ink); display: inline-grid; place-items: center; font-weight: 800; font-size: 10px; flex: none; }
   .act button { color: rgba(255,255,255,.75); border: 1px solid rgba(255,255,255,.14); border-radius: 999px; padding: 5px 11px; background: rgba(255,255,255,.04); }
   .act button:hover { background: rgba(247,168,27,.18); color: #FFD37A; border-color: rgba(247,168,27,.5); }
@@ -469,7 +476,7 @@
     document.querySelectorAll('#nav button').forEach(function (b) { b.addEventListener('click', function () { vai(b.dataset.v); }); });
 
     /* ---------- disegno ---------- */
-    function disegnaTutto() { disegnaBacheca(); disegnaLibreria(); disegnaVetrina(); disegnaNotiziario(); $('nuovo').hidden = !DATI.scrittura; $('bacheca-lead').textContent = DATI.scrittura ? 'Avvisi della Commissione e contributi dei soci: idee, domande, risorse, progetti. Scrivi anche tu con "Nuovo post".' : 'Qui la Commissione pubblica avvisi e novità. Segna "mi interessa" su ciò che ti colpisce e scrivici quando vuoi: le tue osservazioni arrivano direttamente alla Commissione.'; }
+    function disegnaTutto() { disegnaBacheca(); disegnaLibreria(); disegnaVetrina(); disegnaNotiziario(); $('nuovo').hidden = !DATI.scrittura; $('bacheca-lead').textContent = DATI.scrittura ? 'Avvisi della Commissione e contributi dei soci: idee, domande, risorse, progetti. Scrivi anche tu con "Nuovo post": la Commissione lo approva e lo pubblica; i tuoi post li puoi modificare o eliminare quando vuoi.' : 'Qui la Commissione pubblica avvisi e novità. Segna "mi interessa" su ciò che ti colpisce e scrivici quando vuoi: le tue osservazioni arrivano direttamente alla Commissione.'; }
     function disegnaBacheca() {
       var visibili = DATI.post.filter(function (p) { return !colFiltro || p.colonna === colFiltro; });
       var conta = {}; DATI.post.forEach(function (p) { conta[p.colonna] = (conta[p.colonna] || 0) + 1; });
@@ -483,15 +490,26 @@
       lista.sort(function (a, c) { return (c.fissato ? 1 : 0) - (a.fissato ? 1 : 0) || (new Date(c.data) - new Date(a.data)); });
       var b = $('board'); b.innerHTML = '';
       lista.forEach(function (p) {
-        var k = p.colonna, d = document.createElement('article'); d.className = 'post reveal' + (p.fissato ? ' pin' : ''); d.style.setProperty('--c', COLORI[k] || '#17458F');
+        var k = p.colonna, d = document.createElement('article'), attesa = p.stato === 'In attesa', rifiutato = p.stato === 'Rifiutato';
+        d.className = 'post reveal' + (p.fissato ? ' pin' : '') + (attesa ? ' wait' : '') + (rifiutato ? ' rej' : ''); d.style.setProperty('--c', COLORI[k] || '#17458F');
         var lungo = String(p.testo || '').length > 360, link = linkSicuro(p.link);
-        d.innerHTML = '<div class="meta"><span class="kind"><span class="dot"></span>' + esc(k) + '</span>' + (p.fissato ? '<span class="pinlbl">📌 In evidenza</span>' : '') + '<span class="t">' + esc(dataIt(p.data)) + '</span></div>' +
+        d.innerHTML = '<div class="meta"><span class="kind"><span class="dot"></span>' + esc(k) + '</span>' + (p.fissato ? '<span class="pinlbl">📌 In evidenza</span>' : '') +
+          (attesa ? '<span class="stlbl wait">⏳ In attesa di approvazione</span>' : '') + (rifiutato ? '<span class="stlbl rej">✖ Non approvato</span>' : '') + '<span class="t">' + esc(dataIt(p.data)) + '</span></div>' +
           '<div class="tt">' + esc(p.titolo) + '</div><div class="tx' + (lungo ? ' clip' : '') + '">' + esc(p.testo) + '</div>' + (lungo ? '<button class="more">Leggi tutto ↓</button>' : '') +
           (link ? '<a class="att" href="' + esc(link) + '" target="_blank" rel="noopener">Apri il collegamento →</a>' : '') +
+          (rifiutato && p.nota ? '<div class="nota">Nota della Commissione: ' + esc(p.nota.replace(/^rifiutato il [^—]*— ?/, '')) + '</div>' : '') +
+          (attesa ? '<div class="nota" style="color:#FFD37A">Lo vedi solo tu: sarà in bacheca per tutti quando la Commissione lo approva.</div>' : '') +
           '<div class="act"><span class="by"><span class="av">' + esc(ini(p.autore)) + '</span>' + esc(p.autore) + (p.club ? ' · ' + esc(p.club) : '') + '</span>' +
-          '<button class="like' + (p.mio ? ' on' : '') + '" title="Mi interessa"><span class="star">★</span> <b>' + (p.interessa || 0) + '</b></button><button class="fb" title="Scrivi alla Commissione">💬</button></div>';
+          (p.proprio ? '<span class="own"><button class="ed" title="Modifica il tuo post">✎ Modifica</button><button class="del" title="Elimina il tuo post">🗑 Elimina</button></span>' : '') +
+          (attesa || rifiutato ? '' : '<button class="like' + (p.mio ? ' on' : '') + '" title="Mi interessa"><span class="star">★</span> <b>' + (p.interessa || 0) + '</b></button>') + '<button class="fb" title="Scrivi alla Commissione">💬</button></div>';
         var more = d.querySelector('.more'); if (more) more.onclick = function () { d.querySelector('.tx').classList.remove('clip'); more.remove(); };
-        d.querySelector('.like').onclick = function () {
+        var ed = d.querySelector('.ed'); if (ed) ed.onclick = function () { apriPost(p); };
+        var del = d.querySelector('.del'); if (del) del.onclick = function () {
+          if (!del.classList.contains('sure')) { del.classList.add('sure'); del.textContent = 'Confermi? Elimina'; setTimeout(function () { del.classList.remove('sure'); del.textContent = '🗑 Elimina'; }, 4000); return; }
+          del.disabled = true;
+          api('piazza.elimina', { id: p.id }).then(function (r) { if (!r.ok) { toast(r.errore || 'Errore.'); del.disabled = false; return; } DATI.post = DATI.post.filter(function (x) { return x.id !== p.id; }); disegnaBacheca(); osserva(); toast('Post eliminato'); }).catch(function (e) { toast(e.message); del.disabled = false; });
+        };
+        var lk = d.querySelector('.like'); if (lk) lk.onclick = function () {
           var btn = this; btn.disabled = true;
           api('piazza.interessa', { id: p.id }).then(function (r) { if (r.ok) { p.mio = r.mio; p.interessa = r.interessa; btn.classList.toggle('on', p.mio); btn.querySelector('b').textContent = p.interessa; } }).catch(function () {}).then(function () { btn.disabled = false; });
         };
@@ -560,18 +578,28 @@
         $('m-fb').classList.remove('on'); toast('Messaggio inviato alla Commissione');
       }).catch(function (e) { m.className = 'msg main-msg err'; m.textContent = e.message; }).then(function () { btn.disabled = false; });
     });
-    $('nuovo').addEventListener('click', function () {
-      $('np-col').innerHTML = DATI.colonne.filter(function (c) { return c !== 'Avvisi' && c !== 'Incontri'; }).map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('');
-      $('np-firma').textContent = 'Firmato come ' + (DATI.me.nome || DATI.me.email) + ' · ' + (DATI.me.club || ''); $('m-np').textContent = ''; $('m-post').classList.add('on');
-    });
+    var postInModifica = null;
+    function apriPost(p) {
+      postInModifica = p || null;
+      $('np-col').innerHTML = DATI.colonne.filter(function (c) { return c !== 'Avvisi' && c !== 'Incontri'; }).map(function (c) { return '<option' + (p && p.colonna === c ? ' selected' : '') + '>' + esc(c) + '</option>'; }).join('');
+      $('np-tt').value = p ? p.titolo : ''; $('np-tx').value = p ? p.testo : ''; $('np-ln').value = p ? (p.link || '') : ''; $('np-tag').value = p ? (p.etichette || '') : '';
+      $('m-post').querySelector('h3').textContent = p ? 'Modifica il tuo post' : 'Nuovo post';
+      $('np-ok').textContent = p ? 'Salva e invia alla Commissione' : 'Invia alla Commissione';
+      $('np-firma').textContent = 'Firmato come ' + (DATI.me.nome || DATI.me.email) + ' · ' + (DATI.me.club || '') + '. Il post compare in bacheca per tutti dopo l\'approvazione della Commissione' + (p ? '; fino ad allora la versione precedente non è visibile.' : '.');
+      $('m-np').textContent = ''; $('m-post').classList.add('on');
+    }
+    $('nuovo').addEventListener('click', function () { apriPost(null); });
     $('np-ann').addEventListener('click', function () { $('m-post').classList.remove('on'); });
     $('np-ok').addEventListener('click', function () {
       var tt = $('np-tt').value.trim(), m = $('m-np'); if (!tt) { $('np-tt').focus(); return; }
-      this.disabled = true; var btn = this;
-      api('piazza.pubblica', { colonna: $('np-col').value, titolo: tt, testo: $('np-tx').value.trim(), link: $('np-ln').value.trim(), etichette: $('np-tag').value.trim() }).then(function (r) {
+      this.disabled = true; var btn = this, p = postInModifica;
+      var corpo = { colonna: $('np-col').value, titolo: tt, testo: $('np-tx').value.trim(), link: $('np-ln').value.trim(), etichette: $('np-tag').value.trim() };
+      if (p) corpo.id = p.id;
+      api(p ? 'piazza.modifica' : 'piazza.pubblica', corpo).then(function (r) {
         if (!r.ok) { m.className = 'msg main-msg err'; m.textContent = r.errore || 'Errore.'; return; }
-        DATI.post.unshift({ id: r.id, data: new Date().toISOString(), colonna: $('np-col').value, titolo: tt, testo: $('np-tx').value.trim(), link: $('np-ln').value.trim(), etichette: $('np-tag').value.trim(), autore: DATI.me.nome, club: DATI.me.club, fissato: false, interessa: 0, mio: false });
-        ['np-tt', 'np-tx', 'np-ln', 'np-tag'].forEach(function (i) { $(i).value = ''; }); $('m-post').classList.remove('on'); filtro = ''; disegnaBacheca(); osserva(); toast('Post pubblicato');
+        if (p) { p.colonna = corpo.colonna; p.titolo = tt; p.testo = corpo.testo; p.link = corpo.link; p.etichette = corpo.etichette; p.stato = 'In attesa'; p.nota = ''; }
+        else DATI.post.unshift({ id: r.id, data: new Date().toISOString(), colonna: corpo.colonna, titolo: tt, testo: corpo.testo, link: corpo.link, etichette: corpo.etichette, autore: DATI.me.nome, club: DATI.me.club, fissato: false, interessa: 0, mio: false, proprio: true, stato: 'In attesa', nota: '' });
+        $('m-post').classList.remove('on'); filtro = ''; colFiltro = ''; disegnaBacheca(); osserva(); toast(r.messaggio || 'Inviato alla Commissione');
       }).catch(function (e) { m.className = 'msg main-msg err'; m.textContent = e.message; }).then(function () { btn.disabled = false; });
     });
     document.querySelectorAll('.modalbg').forEach(function (m) { m.addEventListener('click', function (e) { if (e.target === m && m.id !== 'm-profilo') m.classList.remove('on'); }); });
