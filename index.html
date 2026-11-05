@@ -125,6 +125,10 @@
   .meeting .num { grid-row: span 3; width: 58px; height: 58px; border-radius: 50%; background: conic-gradient(from 200deg, var(--gold), var(--sky), var(--royal), var(--gold)); color: var(--on-royal); display: grid; place-items: center; font-weight: 800; font-size: 1.4rem; position: relative; }
   .meeting .num::before { content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--royal); }
   .meeting .num span { position: relative; }
+  .meeting .mat { grid-column: 2; margin-top: 4px; font-size: .92rem; }
+  .meeting .mat a { font-weight: 700; color: var(--gold); text-decoration: none; border-bottom: 2px solid var(--gold); }
+  .meeting .mat a:hover { color: #fff; }
+  .meeting .mat small { display: block; color: var(--muted); margin-top: 2px; }
   .meeting .date { font-size: 13.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-deep); }
   .meeting h3 { font-size: 1.2rem; }
   .meeting p { color: var(--fg-muted); font-size: 15px; margin-top: 2px; }
@@ -438,7 +442,7 @@
       <div class="step">
         <div class="time">Il giorno dopo</div>
         <h3>Materiali e registrazione</h3>
-        <p>Chi desidera ricevere la registrazione delle pillole, le slide e gli altri materiali può lasciare il proprio indirizzo email nel registro condiviso durante l'incontro. La compilazione è facoltativa. I materiali vanno a chi era presente. Il confronto non viene registrato: ognuno può esprimersi liberamente. Il questionario di gradimento viene inviato insieme ai materiali.</p>
+        <p>La registrazione delle pillole, le slide e gli altri materiali arrivano il giorno dopo via email a chi era collegato all'incontro (facciamo riferimento all'elenco dei partecipanti di Google Meet: conviene collegarsi con l'indirizzo email a cui si vogliono ricevere). Dal calendario qui sotto si apre l'archivio di ogni incontro svolto, riservato a chi era presente. Il confronto non viene registrato: ognuno può esprimersi liberamente. Il questionario di gradimento viene inviato insieme ai materiali.</p>
       </div>
     </div>
   </div>
@@ -602,7 +606,7 @@
   var LINK = {
     /* Nel sito pubblico stanno solo gli strumenti aperti a tutti. Registro presenze, link Meet, archivio
        dei materiali e pannello di regia NON vanno messi qui: si comunicano via email / WhatsApp
-       (registro durante l'incontro; materiali dopo, a chi era presente e ha compilato il registro). I loro indirizzi
+       (materiali il giorno dopo a chi era collegato, secondo l'elenco partecipanti di Google Meet). I loro indirizzi
        sono nella scheda "Config" del foglio di regia. */
     showcase:   'https://docs.google.com/forms/d/e/1FAIpQLScQsqE4_LhBxGq-isnq7LkiBbpPT4aAX2jeCPC9SrNlC3libw/viewform',
     privacy:    'https://drive.google.com/file/d/1BK7rmpkwN4Tu5qX0GQu37xCoUsF-kOgW/view',  /* informativa privacy: il PDF nella cartella Pubblico di Drive, si apre direttamente nel visualizzatore */
@@ -626,6 +630,10 @@
     3: 'Usare l\'AI in modo responsabile',
     4: 'Dall\'idea al progetto: AI per il territorio'
   };
+  /* Calendario vivo: il back end di regia (azione pubblica "calendario") fornisce numero, titolo, data e cartella di ogni incontro
+     configurato dalla Regia ("Salva serata"). Se risponde, aggiorna date, titoli e archivio qui sopra e aggiunge le serate oltre la quarta;
+     se non risponde (o la rete è lenta), la pagina resta con i valori scritti qui. */
+  var URL_CALENDARIO = 'https://script.google.com/macros/s/AKfycby-N4KOWn_1DAhc-0whysDw4NabPQRsbNTZOfzAzu9HFc_neZDZM8Gpu7_mzSAmDYu8/exec?azione=calendario';
 
   (function () {
     /* Dentro un riquadro (Google Sites) l'hero non usa l'altezza dello schermo. */
@@ -656,6 +664,50 @@
       var d = DATE[el.getAttribute('data-date')];
       if (d) el.textContent = d + ' · ore 21:00';
     });
+    /* Archivio degli incontri svolti: link alla cartella Drive dell'incontro (visibile dal giorno dopo). La cartella è condivisa
+       solo con gli indirizzi dei presenti (Regia → "Apri la cartella ai presenti"): chi non era collegato vede "accesso negato". */
+    var ARCHIVIO = {
+      1: 'https://drive.google.com/drive/folders/1Jh_V7v2rrim2sbqtL-r6ejbQuWGCvGJ9',
+      2: 'https://drive.google.com/drive/folders/1F383Iau0MMNuTaeGsyu0v7iOPPw-yrTE',
+      3: 'https://drive.google.com/drive/folders/15A30apfVqfLSQ0OwGNuB5Ae4tsrJ8hMl',
+      4: 'https://drive.google.com/drive/folders/1zTx0bxKYnp0fFoaYiHOkLjgwjiHJwhEp'
+    };
+    var GIORNI = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'], MESI = ['gennaio', 'febbraio', 'marzo', 'aprile', 'maggio', 'giugno', 'luglio', 'agosto', 'settembre', 'ottobre', 'novembre', 'dicembre'];
+    function dataLunga(iso) { var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''); if (!m) return ''; var d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3])); return GIORNI[d.getDay()] + ' ' + d.getDate() + ' ' + MESI[d.getMonth()] + ' ' + d.getFullYear(); }
+    function disegnaArchivio() {
+      var oggiA = '';
+      try { oggiA = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' }); } catch (e) { oggiA = new Date().toISOString().slice(0, 10); }
+      document.querySelectorAll('.meeting').forEach(function (art) {
+        var n = art.querySelector('[data-date]') && art.querySelector('[data-date]').getAttribute('data-date');
+        var old = art.querySelector('.mat'); if (old) old.remove();
+        if (!n || !ARCHIVIO[n] || !DATE_ISO[n] || DATE_ISO[n] >= oggiA) return;
+        var div = document.createElement('div'); div.className = 'mat';
+        div.innerHTML = '<a href="' + ARCHIVIO[n] + '" target="_blank" rel="noopener">Registrazione e materiali dell\'incontro →</a><small>Riservati a chi era collegato: si aprono con l\'indirizzo Google usato per partecipare. Se non eri presente, la cartella non si apre.</small>';
+        art.appendChild(div);
+      });
+    }
+    disegnaArchivio();
+    /* Aggiornamento dal back end (date/titoli/cartelle configurati dalla Regia; serate oltre la quarta aggiunte al calendario). */
+    try {
+      fetch(URL_CALENDARIO, { redirect: 'follow' }).then(function (r) { return r.json(); }).then(function (c) {
+        if (!c || !c.ok || !c.incontri) return;
+        var grid = document.querySelector('.meeting') && document.querySelector('.meeting').parentNode;
+        c.incontri.forEach(function (i) {
+          if (!i.n) return;
+          if (i.titolo) TITOLI[i.n] = i.titolo;
+          if (i.data) { DATE_ISO[i.n] = i.data; DATE[i.n] = dataLunga(i.data) || DATE[i.n]; }
+          if (i.cartella) ARCHIVIO[i.n] = i.cartella;
+          var art = document.querySelector('.meeting [data-date="' + i.n + '"]');
+          if (!art && grid && i.titolo) {
+            var a = document.createElement('article'); a.className = 'meeting';
+            a.innerHTML = '<div class="num"><span>' + i.n + '</span></div><div class="date" data-date="' + i.n + '">Data da definire</div><h3></h3><p>Serata aggiunta al percorso: i dettagli arrivano via email e nel gruppo WhatsApp dei referenti.</p>';
+            a.querySelector('h3').textContent = i.titolo; grid.appendChild(a);
+          } else if (art && i.titolo) { var h = art.parentNode.querySelector('h3'); if (h) h.textContent = i.titolo; }
+        });
+        document.querySelectorAll('[data-date]').forEach(function (el) { var d = DATE[el.getAttribute('data-date')]; if (d) el.textContent = d + ' · ore 21:00'; });
+        disegnaArchivio();
+      }).catch(function () {});
+    } catch (e) {}
     /* Prossimo incontro: automatico in base alla data di oggi (Europe/Rome). */
     var oggi = '';
     try { oggi = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' }); } catch (e) { oggi = new Date().toISOString().slice(0, 10); }

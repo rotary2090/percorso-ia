@@ -173,6 +173,27 @@
           <p class="note">Ogni pulsante lavora con l'account del Distretto, qualunque sia l'account Google con cui sei collegata in questo browser. Le mail partono da ai.rotary2090@gmail.com.</p>
           </div>
         </div>
+        <div class="card" id="card-serata">
+          <span class="eyebrow">Serata</span>
+          <h2>Configura una serata</h2>
+          <p class="sub">Numero, titolo, data e link Meet di un incontro: "Salva serata" scrive la riga in Config, crea la cartella Drive e le tre mail standard (invito, promemoria, materiali) se mancano. Per un incontro nuovo usa un numero libero (5, 6…): compare subito qui sopra, nelle comunicazioni e nel calendario del sito.</p>
+          <div class="btn-row" style="margin-bottom:8px"><label>Carica <select id="sr-sel"><option value="">— nuova serata —</option></select></label></div>
+          <div class="grid2" style="display:grid;grid-template-columns:1fr 1fr;gap:8px 14px">
+            <label>Numero<br><input id="sr-n" type="number" min="1" max="20" style="width:100%"></label>
+            <label>Data (gg/mm/aaaa)<br><input id="sr-data" placeholder="09/12/2026" style="width:100%"></label>
+            <label style="grid-column:1/3">Titolo<br><input id="sr-titolo" style="width:100%" placeholder="L'AI al servizio del club"></label>
+            <label style="grid-column:1/3">Link Meet (dall'evento nel Calendar UNICAM)<br><input id="sr-meet" style="width:100%" placeholder="https://meet.google.com/xxx-xxxx-xxx"></label>
+            <label>Organizzatore Meet<br><input id="sr-org" style="width:100%" placeholder="Diletta — account UNICAM (diletta.cacciagrano@unicam.it)"></label>
+            <label>Co-organizzatori<br><input id="sr-co" style="width:100%" placeholder="diletta.cacciagrano@gmail.com, ai.rotary2090@gmail.com, michele@ilmiovalore.it"></label>
+            <label style="grid-column:1/3">Link Meet di riserva (facoltativo)<br><input id="sr-ris" style="width:100%"></label>
+          </div>
+          <div class="btn-row" style="margin-top:10px">
+            <button class="btn-sm" type="button" id="sr-salva">Salva serata</button>
+            <button class="btn-sm" type="button" id="sr-cal">Crea l'evento Calendar (UNICAM)</button>
+          </div>
+          <div class="out" id="sr-out" style="margin-top:10px">Scegli una serata da caricare o compila i campi per una nuova.</div>
+          <p class="note">Impostazioni del Meet da replicare nell'evento (come il 4 novembre): Accesso alla riunione <strong>Apri</strong> (nessuna sala d'attesa) · <strong>Registra la riunione</strong> automaticamente, senza sottotitoli · <strong>Monitoraggio della partecipazione</strong> attivo · co-organizzatori dall'elenco invitati · registrazioni condivise con i co-organizzatori. Poi copia il link Meet dell'evento nel campo qui sopra e salva di nuovo.</p>
+        </div>
         <div class="card" id="card-com">
           <span class="eyebrow">Comunicazioni</span>
           <h2>Le mail del percorso: anteprima, modifica, invio</h2>
@@ -296,7 +317,44 @@
         'Info: https://sites.google.com/view/percorso-ia-2026-27\n' +
         'Informativa sul trattamento dei dati: https://rotary2090.github.io/percorso-ia/informativa-privacy.pdf';
     }
+    var SR_INCONTRI = [];
+    function srPopola(st) {
+      SR_INCONTRI = st.incontri || [];
+      var sel = document.getElementById('sr-sel'); var cur = sel.value; sel.innerHTML = '<option value="">— nuova serata —</option>';
+      SR_INCONTRI.forEach(function (i) { var o = document.createElement('option'); o.value = i.n; o.textContent = i.n + ' · ' + i.titolo; sel.appendChild(o); });
+      sel.value = cur;
+      var max = SR_INCONTRI.reduce(function (m, i) { return Math.max(m, Number(i.n) || 0); }, 0);
+      if (!document.getElementById('sr-n').value) document.getElementById('sr-n').value = max + 1;
+    }
+    function srCarica(n) {
+      var i = SR_INCONTRI.filter(function (x) { return String(x.n) === String(n); })[0];
+      var g = function (id) { return document.getElementById(id); };
+      if (!i) { ['sr-titolo', 'sr-data', 'sr-meet', 'sr-org', 'sr-co', 'sr-ris'].forEach(function (id) { g(id).value = ''; }); g('sr-n').value = SR_INCONTRI.reduce(function (m, x) { return Math.max(m, Number(x.n) || 0); }, 0) + 1; return; }
+      g('sr-n').value = i.n; g('sr-titolo').value = i.titolo || ''; g('sr-data').value = dataIt(i.data) === 'data da definire' ? '' : dataIt(i.data);
+      g('sr-meet').value = i.meet || ''; g('sr-org').value = i.organizzatore || ''; g('sr-co').value = i.coorganizzatori || ''; g('sr-ris').value = i.riserva || '';
+    }
+    function srOut(t, err) { var o = document.getElementById('sr-out'); o.textContent = t; o.className = 'out' + (err ? ' err' : ''); }
+    function srDati() { var g = function (id) { return document.getElementById(id).value.trim(); }; return { n: Number(g('sr-n')), titolo: g('sr-titolo'), data: g('sr-data'), meet: g('sr-meet'), organizzatore: g('sr-org'), coorganizzatori: g('sr-co'), riserva: g('sr-ris') }; }
+    document.getElementById('sr-sel').addEventListener('change', function () { srCarica(this.value); srOut(this.value ? 'Serata ' + this.value + ' caricata: modifica e salva.' : 'Nuova serata: compila i campi.'); });
+    document.getElementById('sr-salva').addEventListener('click', function () {
+      var d = srDati(); if (!d.n || !d.titolo || !d.data) { srOut('Servono numero, titolo e data (gg/mm/aaaa).', true); return; }
+      srOut('Salvo la serata ' + d.n + '…');
+      chiama('incontroSalva', d.n, d).then(function (r) {
+        if (!r.ok) { srOut('Errore: ' + r.errore, true); return; }
+        srOut(r.messaggio); window.__srCal = r.urlCalendar || '';
+        return leggiStato().then(function (st) { if (st.ok) { disegna(st); comLeggi(); } });
+      }).catch(function (e) { srOut('Errore di collegamento: ' + e.message, true); });
+    });
+    document.getElementById('sr-cal').addEventListener('click', function () {
+      var d = srDati(); if (!d.n || !d.titolo || !d.data) { srOut('Prima compila numero, titolo e data: il link del Calendar li usa.', true); return; }
+      var m = /^(\d{1,2})\/(\d{1,2})\/(\d{4})/.exec(d.data); if (!m) { srOut('Data non valida: gg/mm/aaaa.', true); return; }
+      var ymd = m[3] + ('0' + m[2]).slice(-2) + ('0' + m[1]).slice(-2);
+      var url = 'https://calendar.google.com/calendar/u/0/r/eventedit?text=' + encodeURIComponent('Percorso IA 2026-27 — incontro ' + d.n + ': ' + d.titolo) + '&dates=' + ymd + 'T210000/' + ymd + 'T220000&ctz=Europe/Rome&details=' + encodeURIComponent('Incontro ' + d.n + ' del Percorso IA 2026-27. Tre pillole e mezz\'ora di confronto; si registrano solo le pillole. Info: https://sites.google.com/view/percorso-ia-2026-27') + '&authuser=diletta.cacciagrano%40unicam.it';
+      window.open(url, '_blank', 'noopener');
+      srOut('Si apre il Calendar UNICAM con l\'evento precompilato (21:00-22:00). Aggiungi la videoconferenza Meet, apri le opzioni del Meet e imposta come il 4 novembre (vedi nota), salva l\'evento, poi copia qui il link Meet e premi "Salva serata".');
+    });
     function disegna(st) {
+      srPopola(st);
       document.getElementById('stato-sub').textContent = 'Collegato al back end di ' + st.account + '.';
       document.getElementById('loading').hidden = true;
       document.getElementById('panel-body').hidden = false;
