@@ -165,6 +165,11 @@
             <button class="btn-sm warn" data-az="setupIniziale" data-conferma="Il setup iniziale va eseguito una sola volta, alla prima installazione. Continuare?">Setup iniziale</button>
           </div>
           <div class="out" id="out" style="margin-top:14px">Pronto.</div>
+          <details class="pw-change" style="margin-top:12px"><summary>Rubrica nomi → email (per i partecipanti al Meet non abbinati)</summary>
+            <p class="note">Una riga per persona, nella forma <code>Nome Cognome → email</code>. Serve quando "Importa presenze da Meet" non riesce a ricavare l'email di qualcuno: aggiungi qui e reimporta. La rubrica resta valida per gli incontri successivi.</p>
+            <textarea id="rubrica-testo" rows="4" style="width:100%;box-sizing:border-box" placeholder="Aldo Angelico → aldo.angelico@esempio.it"></textarea>
+            <div class="btn-row" style="margin-top:6px"><button class="btn-sm" type="button" id="rubrica-salva">Aggiungi alla rubrica</button></div>
+          </details>
           <p class="note">Ogni pulsante lavora con l'account del Distretto, qualunque sia l'account Google con cui sei collegata in questo browser. Le mail partono da ai.rotary2090@gmail.com.</p>
           </div>
         </div>
@@ -218,9 +223,9 @@
           <span class="eyebrow">Promemoria</span>
           <ul class="links">
             <li><strong>Come arriva il link ai soci (due canali).</strong> 1) <em>Invito via email</em> a tutta la mailing list (scheda "Mailing list" del foglio, costruita con i nominativi segnalati dai club): pulsante "Invito con il link Meet", che porta alla comunicazione pronta (anteprima, poi Invia o Crea bozza in Gmail). 2) <em>Gruppo WhatsApp dei referenti</em>: pulsante "Testo per WhatsApp", copia e incolla nel gruppo. I referenti girano il link ai soci del club. Il link Meet non va sul sito pubblico.</li>
-            <li>Il registro presenze si incolla nella chat di Meet durante l'incontro (link qui sotto e in Config). Ha la casella di consenso ai materiali: la cartella dell'incontro si apre solo a chi l'ha spuntata (informativa 1.5). All'inizio dell'incontro si legge l'avviso sulla registrazione (volume 2, testi pronti).</li>
+            <li><strong>Presenze = chi si è collegato al Meet</strong> (dal 5/11/2026 non si usa più il registro presenze). All'inizio dell'incontro si legge l'avviso sulla registrazione (volume 2, testi pronti). Il report di partecipazione e la chat arrivano da soli nel Drive UNICAM dell'organizzatrice, nelle cartelle "Segnalazioni della riunione" e "Google Meet" (condivise in lettura con ai.rotary2090, ID in Config).</li>
             <li>Si registra solo la parte delle pillole: alla fine dell'ultima pillola il facilitatore ferma la registrazione prima di aprire il confronto.</li>
-            <li>Il giorno dopo: carica la registrazione nella cartella dell'incontro → <strong>Apri la cartella ai presenti</strong> (dà il permesso di lettura sulla cartella Drive a chi ha compilato il registro: non c'entra con Meet) → <strong>Materiali e questionario ai presenti</strong> (la mail con cartella e questionario, a chi ha avuto l'accesso).</li>
+            <li>Il giorno dopo: <strong>Importa presenze da Meet</strong> (legge report e chat, scrive i presenti in Presenze con nome, minuti e fonte, archivia chat e report in "Regia — Meet", copia la registrazione nella cartella dell'incontro; il report di Meet maschera le email esterne, lo script le ricostruisce da mailing list, chat e rubrica: i nomi non abbinati vanno completati a mano nella scheda Presenze o con la Rubrica qui sotto, poi si reimporta) → <strong>Apri la cartella ai presenti</strong> (lettura sulla cartella Drive a chi era collegato almeno 20 minuti) → <strong>Materiali e questionario ai presenti</strong> (la mail con cartella e questionario, a chi ha avuto l'accesso).</li>
             <li><strong>Piano B della diretta.</strong> Il Meet lo avvia chi l'ha creato oppure uno dei co-organizzatori indicati in Config (si collegano al link normale e la riunione parte). Solo se il link normale non funziona proprio: aprire il <em>link di riserva</em> (creato da un altro account della Commissione) e comunicarlo subito ai referenti nel gruppo WhatsApp.</li>
           </ul>
           <details class="pw-change">
@@ -287,7 +292,7 @@
         dataIt(i.data) + ' alle 21:00, online (un\'ora: tre pillole e mezz\'ora di confronto).\n' +
         'Link per partecipare: ' + (i.meet || '[link Meet da inserire in Config]') + '\n' +
         'Non serve iscriversi: giratelo ai soci del vostro club, tutti sono benvenuti.\n' +
-        (st.moduli.presenze ? 'Chi vuole ricevere la registrazione delle pillole e i materiali lascia la sua email nel registro presenze durante l\'incontro (facoltativo): i materiali vanno a chi era presente. Il confronto non viene registrato.\n' : '') +
+        'La registrazione delle pillole e i materiali arrivano il giorno dopo via mail a chi era collegato. Il confronto non viene registrato.\n' +
         'Info: https://sites.google.com/view/percorso-ia-2026-27\n' +
         'Informativa sul trattamento dei dati: https://rotary2090.github.io/percorso-ia/informativa-privacy.pdf';
     }
@@ -304,7 +309,7 @@
         var div = document.createElement('div'); div.className = 'meeting-row';
         div.innerHTML = '<div><h3>' + i.n + ' · ' + esc(i.titolo) + '</h3><div class="meta">' + esc(dataIt(i.data)) + ' · ore 21:00 · ' +
           (i.meet ? 'Meet: <a href="' + esc(i.meet) + '" target="_blank" rel="noopener">' + esc(i.meet) + '</a>' : 'link Meet non ancora in Config') +
-          (st.moduli.presenze ? ' · <a href="' + esc(st.moduli.presenze) + '" target="_blank" rel="noopener">registro presenze</a>' : '') + '</div>' +
+          '</div>' +
           '<div class="meta">' + (i.organizzatore ? 'Meet creato da <strong>' + esc(i.organizzatore) + '</strong>' : '<strong>Organizzatore del Meet non indicato in Config</strong>') +
           (i.coorganizzatori ? ' · può avviarlo anche: ' + esc(i.coorganizzatori) : ' · nessun co-organizzatore indicato') +
           (i.riserva ? ' · <a href="' + esc(i.riserva) + '" target="_blank" rel="noopener">link di riserva</a>' : ' · nessun link di riserva') + '</div></div>' +
@@ -312,6 +317,7 @@
           '<button class="btn-sm" type="button" data-com-go="invito-' + i.n + '">Invito con il link Meet</button>' +
           '<button class="btn-sm" type="button" data-com-go="promemoria-' + i.n + '">Promemoria del giorno</button>' +
           '<button class="btn-sm" type="button" data-wa="' + i.n + '">Testo per WhatsApp</button>' +
+          '<button class="btn-sm" data-az="meetImporta" data-n="' + i.n + '" data-conferma="Leggo dal Drive UNICAM il report di partecipazione e la chat del Meet dell\'incontro ' + i.n + ', scrivo i presenti nella scheda Presenze (sostituendo un import precedente dello stesso incontro), archivio chat e report nella cartella Regia — Meet e copio la registrazione nella cartella dell\'incontro. Continuare?">Importa presenze da Meet</button>' +
           '<button class="btn-sm" data-az="apriAccessi" data-n="' + i.n + '">Apri la cartella ai presenti</button>' +
           '<button class="btn-sm" type="button" data-com-go="materiali-' + i.n + '">Materiali e questionario ai presenti</button>' +
           '<button class="btn-sm" data-az="riepilogo" data-n="' + i.n + '">Riepilogo</button></div>' +
@@ -328,6 +334,12 @@
       });
     }
 
+    document.getElementById('rubrica-salva').addEventListener('click', function () {
+      var ta = document.getElementById('rubrica-testo'); if (!ta.value.trim()) { mostra('Scrivi almeno una riga "Nome Cognome → email".', true); return; }
+      mostra('Aggiorno la rubrica…');
+      chiama('meetRubrica', 0, { testo: ta.value }).then(function (r) { if (r.ok) { mostra(r.messaggio); ta.value = ''; } else mostra('Errore: ' + r.errore, true); })
+        .catch(function (e) { mostra('Errore di collegamento: ' + e.message, true); });
+    });
     document.addEventListener('click', function (ev) {
       var w = ev.target.closest('button[data-wa]');
       if (w) { var box = document.getElementById('wa-' + w.dataset.wa); box.classList.toggle('open'); return; }
