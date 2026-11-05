@@ -246,7 +246,7 @@
             <li><strong>Come arriva il link ai soci (due canali).</strong> 1) <em>Invito via email</em> a tutta la mailing list (scheda "Mailing list" del foglio, costruita con i nominativi segnalati dai club): pulsante "Invito con il link Meet", che porta alla comunicazione pronta (anteprima, poi Invia o Crea bozza in Gmail). 2) <em>Gruppo WhatsApp dei referenti</em>: pulsante "Testo per WhatsApp", copia e incolla nel gruppo. I referenti girano il link ai soci del club. Il link Meet non va sul sito pubblico.</li>
             <li><strong>Presenze = chi si è collegato al Meet</strong> (dal 5/11/2026 non si usa più il registro presenze). All'inizio dell'incontro si legge l'avviso sulla registrazione (volume 2, testi pronti). Il report di partecipazione e la chat arrivano da soli nel Drive UNICAM dell'organizzatrice, nelle cartelle "Segnalazioni della riunione" e "Google Meet" (condivise in lettura con ai.rotary2090, ID in Config).</li>
             <li>Si registra solo la parte delle pillole: alla fine dell'ultima pillola il facilitatore ferma la registrazione prima di aprire il confronto.</li>
-            <li>Il giorno dopo: <strong>Importa presenze da Meet</strong> (legge report e chat, scrive i presenti in Presenze con nome, minuti e fonte, archivia chat e report in "Regia — Meet", copia la registrazione nella cartella dell'incontro; il report di Meet maschera le email esterne, lo script le ricostruisce da mailing list, chat e rubrica: i nomi non abbinati vanno completati a mano nella scheda Presenze o con la Rubrica qui sotto, poi si reimporta) → <strong>Apri la cartella ai presenti</strong> (lettura sulla cartella Drive a chi era collegato almeno 20 minuti) → <strong>Materiali e questionario ai presenti</strong> (la mail con cartella e questionario, a chi ha avuto l'accesso).</li>
+            <li>Il giorno dopo: <strong>Importa presenze da Meet</strong> (legge report e chat, scrive i presenti in Presenze con nome, minuti e fonte, archivia chat e report in "Regia — Meet", copia la registrazione nella cartella dell'incontro; il report di Meet maschera le email esterne, lo script le ricostruisce da mailing list, chat e rubrica: i nomi non abbinati vanno completati a mano nella scheda Presenze o con la Rubrica qui sotto, poi si reimporta) → carica nella cartella Drive dell'incontro il video tagliato e le slide → <strong>Materiali e questionario ai presenti</strong>: all'invio lo script dà la lettura sulla cartella a chi era collegato almeno 20 minuti (scheda Accessi) e manda la mail con il link alla cartella e il questionario solo a loro; si può rilanciare, va solo a chi manca.</li>
             <li><strong>Piano B della diretta.</strong> Il Meet lo avvia chi l'ha creato oppure uno dei co-organizzatori indicati in Config (si collegano al link normale e la riunione parte). Solo se il link normale non funziona proprio: aprire il <em>link di riserva</em> (creato da un altro account della Commissione) e comunicarlo subito ai referenti nel gruppo WhatsApp.</li>
           </ul>
           <details class="pw-change">
@@ -376,7 +376,6 @@
           '<button class="btn-sm" type="button" data-com-go="promemoria-' + i.n + '">Promemoria del giorno</button>' +
           '<button class="btn-sm" type="button" data-wa="' + i.n + '">Testo per WhatsApp</button>' +
           '<button class="btn-sm" data-az="meetImporta" data-n="' + i.n + '" data-conferma="Leggo dal Drive UNICAM il report di partecipazione e la chat del Meet dell\'incontro ' + i.n + ', scrivo i presenti nella scheda Presenze (sostituendo un import precedente dello stesso incontro), archivio chat e report nella cartella Regia — Meet e copio la registrazione nella cartella dell\'incontro. Continuare?">Importa presenze da Meet</button>' +
-          '<button class="btn-sm" data-az="apriAccessi" data-n="' + i.n + '">Apri la cartella ai presenti</button>' +
           '<button class="btn-sm" type="button" data-com-go="materiali-' + i.n + '">Materiali e questionario ai presenti</button>' +
           '<button class="btn-sm" data-az="riepilogo" data-n="' + i.n + '">Riepilogo</button></div>' +
           '<div class="wa" id="wa-' + i.n + '"><textarea readonly>' + esc(testoWa(i, st)) + '</textarea>' +
@@ -553,7 +552,7 @@
       }).catch(function (e) { document.getElementById('com-sub').textContent = 'Back end non raggiungibile: ' + e.message; });
     }
     function comDestOpzioni(sel) {
-      var o = [['mailing', 'Mailing list (tutti i referenti)'], ['accessi:1', 'Presenti dell\'incontro 1 (accessi aperti)'], ['accessi:2', 'Presenti dell\'incontro 2'], ['accessi:3', 'Presenti dell\'incontro 3'], ['accessi:4', 'Presenti dell\'incontro 4'], ['membri', 'Membri di mAIplace']];
+      var o = [['mailing', 'Mailing list (tutti i referenti)'], ['accessi:1', 'Presenti dell\'incontro 1'], ['accessi:2', 'Presenti dell\'incontro 2'], ['accessi:3', 'Presenti dell\'incontro 3'], ['accessi:4', 'Presenti dell\'incontro 4'], ['membri', 'Membri di mAIplace']];
       return o.map(function (x) { return '<option value="' + x[0] + '"' + (x[0] === sel ? ' selected' : '') + '>' + x[1] + '</option>'; }).join('');
     }
     function comFormHtml(c) {
