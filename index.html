@@ -442,7 +442,7 @@
       <div class="step">
         <div class="time">Il giorno dopo</div>
         <h3>Materiali e registrazione</h3>
-        <p>La registrazione delle pillole, le slide e gli altri materiali arrivano il giorno dopo via email a chi era collegato all'incontro (facciamo riferimento all'elenco dei partecipanti di Google Meet: conviene collegarsi con l'indirizzo email a cui si vogliono ricevere). Dal calendario qui sotto si apre l'archivio di ogni incontro svolto, riservato a chi era presente. Il confronto non viene registrato: ognuno può esprimersi liberamente. Il questionario di gradimento viene inviato insieme ai materiali.</p>
+        <p>La registrazione delle pillole, le slide e gli altri materiali arrivano il giorno dopo via email a chi era collegato all'incontro (facciamo riferimento all'elenco dei partecipanti di Google Meet: conviene collegarsi con l'indirizzo email a cui si vogliono ricevere). Dal calendario qui sotto si apre l'archivio di ogni incontro svolto (registrazione delle pillole, slide e materiali dei relatori): il link si apre senza account Google. Il confronto non viene registrato: ognuno può esprimersi liberamente. Il questionario di gradimento viene inviato insieme ai materiali.</p>
       </div>
     </div>
   </div>
@@ -682,7 +682,7 @@
         var old = art.querySelector('.mat'); if (old) old.remove();
         if (!n || !ARCHIVIO[n] || !DATE_ISO[n] || DATE_ISO[n] >= oggiA) return;
         var div = document.createElement('div'); div.className = 'mat';
-        div.innerHTML = '<a href="' + ARCHIVIO[n] + '" target="_blank" rel="noopener">Registrazione e materiali dell\'incontro →</a><small>Riservati a chi era collegato: si aprono con l\'indirizzo Google usato per partecipare. Se non eri presente, la cartella non si apre.</small>';
+        div.innerHTML = '<a href="' + ARCHIVIO[n] + '" target="_blank" rel="noopener">Registrazione e materiali dell\'incontro →</a><small>Registrazione delle pillole, slide e materiali dei relatori. Si apre con il link, senza account Google.</small>';
         art.appendChild(div);
       });
     }
